@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-require_once '/var/www/voip.efsol.ru/asterisk/notify/init.php';
+require_once '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/notify/init.php';
 
 if (count($argv) == 3 && is_numeric($argv[1]) && is_numeric($argv[2]))
 {
