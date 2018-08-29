@@ -1,0 +1,107 @@
+TelegramBot\Api\Client Object
+(
+    [api:protected] => TelegramBot\Api\BotApi Object
+        (
+            [curl:protected] => Resource id #14
+            [token:protected] => 600651612:AAEJtjU5gyOH1o3f6CRj4qIVAz6O7epRfrQ
+            [tracker:protected] => 
+            [trackedEvents:protected] => Array
+                (
+                )
+
+            [returnArray:protected] => 1
+        )
+
+    [events:protected] => TelegramBot\Api\Events\EventCollection Object
+        (
+            [events:protected] => 
+            [tracker:protected] => 
+        )
+
+)
+
+TelegramBot\Api\Client Object
+(
+    [api:protected] => TelegramBot\Api\BotApi Object
+        (
+            [curl:protected] => Resource id #14
+            [token:protected] => 600651612:AAEJtjU5gyOH1o3f6CRj4qIVAz6O7epRfrQ
+            [tracker:protected] => 
+            [trackedEvents:protected] => Array
+                (
+                )
+
+            [returnArray:protected] => 1
+        )
+
+    [events:protected] => TelegramBot\Api\Events\EventCollection Object
+        (
+            [events:protected] => 
+            [tracker:protected] => 
+        )
+
+)
+
+177952832
+30893259
+171028215
+30893259
+Array
+(
+)
+
+Array
+(
+)
+
++79261587000
++79261587000
+79261587000
+177952832
+79261587000
+79261587000
+79261587000
+Array
+(
+    [0] => Array
+        (
+            [uid] => 177952832
+            [number] => 110
+        )
+
+)
+
+Array
+(
+    [0] => Array
+        (
+            [uid] => 177952832
+            [number] => 110
+        )
+
+)
+
+Array
+(
+    [0] => Array
+        (
+            [uid] => 177952832
+            [number] => 110
+        )
+
+)
+
+Array
+(
+    [0] => Array
+        (
+            [uid] => 177952832
+            [number] => 110
+        )
+
+)
+
+Array
+(
+)
+
