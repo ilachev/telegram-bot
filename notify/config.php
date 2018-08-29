@@ -34,7 +34,7 @@ if(file_exists($config['odbc_file'])){
 }
 
 
-define('API_KEY', '<removed>');
+define('API_KEY', '651882769:AAHPoFaQTkbPUtTMTArHc4ZgyxpmJvTJtrM');
 
 define('DB_DSN', 'mysql:host='.$config['sql_host'].';dbname='.$config['sql_db'].';');
 define('DB_USR', $config['sql_user']);
