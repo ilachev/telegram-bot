@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'pcs\\' => array($baseDir . '/classes'),
     'TelegramBot\\Api\\' => array($vendorDir . '/telegram-bot/api/src'),
 );

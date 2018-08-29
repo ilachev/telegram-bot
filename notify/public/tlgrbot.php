@@ -27,16 +27,16 @@ if(array_key_exists('REQUEST_METHOD', $_SERVER)) {
 
 	try {
 
-		$bot->command('start', function ($message) use ($bot,$config)
-		{
-			//dump2log($config['logfile'],$message->getChat()->getId());
-						$reply		 = "Добро пожаловать, {$message->getFrom()->getUsername()} ". PHP_EOL
-									   . "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL
-									   . "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL
-									   . "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
-			$keyboard	 = new \TelegramBot\Api\Types\ReplyKeyboardMarkup([[["text" => "Подписаться", 'request_contact' => true]]], true, true);
-			$bot->sendMessage($message->getChat()->getId(), $reply, 'html', false, null, $keyboard);
-		});
+    $bot->command('start', function ($message) use ($bot,$config)
+    {
+        //dump2log($config['logfile'],$message->getChat()->getId());
+                    $reply		 = "Добро пожаловать, {$message->getFrom()->getUsername()} ". PHP_EOL
+                                   . "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL
+                                   . "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL
+                                   . "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+        $keyboard	 = new \TelegramBot\Api\Types\ReplyKeyboardMarkup([[["text" => "Подписаться", 'request_contact' => true]]], true, true);
+        $bot->sendMessage($message->getChat()->getId(), $reply, 'html', false, null, $keyboard);
+    });
 
 	$bot->command('отписаться', function ($message) use ($bot, $db)
 	{

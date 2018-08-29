@@ -1,7 +1,7 @@
 <?php
 
 
- $config['odbc_file']="/etc/odbc.ini";
+$config['odbc_file'] = realpath(__DIR__ . '/etc/obdc.ini');
 
 if(file_exists($config['odbc_file'])){
 
@@ -46,6 +46,7 @@ define('SIPS_PATH', './sip.conf');
 $admins = [
 '30893259', //m.konchevich
 '177952832', //dshleg
-'612025923' //Galenko
+'612025923', //Galenko
+'505904694', //Galenko
 ];
 

@@ -4,9 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit909e677b36482b38d37edd128689161c
+class ComposerStaticInitf5b37228d21fa4b6eba8611e7ae558c6
 {
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'pcs\\' => 4,
+        ),
         'T' => 
         array (
             'TelegramBot\\Api\\' => 16,
@@ -14,6 +18,10 @@ class ComposerStaticInit909e677b36482b38d37edd128689161c
     );
 
     public static $prefixDirsPsr4 = array (
+        'pcs\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/classes',
+        ),
         'TelegramBot\\Api\\' => 
         array (
             0 => __DIR__ . '/..' . '/telegram-bot/api/src',
@@ -23,8 +31,8 @@ class ComposerStaticInit909e677b36482b38d37edd128689161c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit909e677b36482b38d37edd128689161c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit909e677b36482b38d37edd128689161c::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf5b37228d21fa4b6eba8611e7ae558c6::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf5b37228d21fa4b6eba8611e7ae558c6::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

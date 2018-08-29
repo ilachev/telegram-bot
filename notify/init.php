@@ -5,12 +5,12 @@ require 'config.php';
 
 $db = new PDO(DB_DSN, DB_USR, DB_PWD);
 
-if(!array_key_exists('REQUEST_METHOD', $_SERVER) or $_SERVER['REQUEST_METHOD']=='POST') {
+//if(!array_key_exists('REQUEST_METHOD', $_SERVER) or $_SERVER['REQUEST_METHOD']=='POST') {
 
 $bot = new \TelegramBot\Api\Client(API_KEY);
-$bot->setProxy('socks5://110:ef2tlgrproxy@5.189.129.242:31080');
+//$bot->setProxy('socks5://110:ef2tlgrproxy@5.189.129.242:31080');
 
-}
+//}
 
 //
 //function update_numbers()
