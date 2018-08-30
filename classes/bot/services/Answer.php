@@ -86,12 +86,32 @@ class Answer
                 }
                 break;
 
+            case CommandHelper::USER_MANAGEMENT:
+                return 'Выберите пункт';
+                break;
+
+            case CommandHelper::MANAGE_REDIRECTS:
+                return 'Выберите пункт';
+                break;
+
             case CommandHelper::ADDING_MAPPING:
                 return 'Введите добавочный номер нового сотрудника';
                 break;
 
-            case CommandHelper::USER_MANAGEMENT:
-                return 'Выберите пункт';
+            case CommandHelper::DELETING_MAPPING:
+                return 'Введите добавочный номер';
+                break;
+
+            case CommandHelper::EDITING_MAPPING:
+                return 'Введите добавочный номер';
+                break;
+
+            case CommandHelper::ADDING_DIRECTIONS:
+                return 'Введите код страны и кол-во символов  (Например 380*********)';
+                break;
+
+            case CommandHelper::DELETING_DIRECTIONS:
+                return 'Введите код страны и кол-во символов';
                 break;
 
             default:

@@ -27,6 +27,7 @@ class Keyboard
                     [
                         [
                             ['text' => CommandHelper::USER_MANAGEMENT],
+                            ['text' => CommandHelper::MANAGE_REDIRECTS],
                         ]
                     ],
                     true,
@@ -39,7 +40,26 @@ class Keyboard
                 $keyboard = new ReplyKeyboardMarkup(
                     [
                         [
+                            ['text' => CommandHelper::VIEW_MAPPING],
                             ['text' => CommandHelper::ADDING_MAPPING],
+                        ],
+                        [
+                            ['text' => CommandHelper::EDITING_MAPPING],
+                            ['text' => CommandHelper::DELETING_MAPPING],
+                        ]
+                    ],
+                    true,
+                    true
+                );
+                return $keyboard;
+                break;
+
+            case CommandHelper::MANAGE_REDIRECTS:
+                $keyboard = new ReplyKeyboardMarkup(
+                    [
+                        [
+                            ['text' => CommandHelper::ADDING_DIRECTIONS],
+                            ['text' => CommandHelper::DELETING_DIRECTIONS],
                         ]
                     ],
                     true,

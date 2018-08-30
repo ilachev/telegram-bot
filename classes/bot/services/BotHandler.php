@@ -20,7 +20,13 @@ class BotHandler
 
     private $allowedRawCommands = [
         CommandHelper::USER_MANAGEMENT,
-        CommandHelper::ADDING_MAPPING
+        CommandHelper::ADDING_MAPPING,
+        CommandHelper::DELETING_MAPPING,
+        CommandHelper::EDITING_MAPPING,
+        CommandHelper::VIEW_MAPPING,
+        CommandHelper::MANAGE_REDIRECTS,
+        CommandHelper::ADDING_DIRECTIONS,
+        CommandHelper::DELETING_DIRECTIONS,
     ];
 
     private $bot;
