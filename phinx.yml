@@ -1,6 +1,6 @@
 paths:
-    migrations: '%%PHINX_CONFIG_DIR%%/db/migrations'
-    seeds: '%%PHINX_CONFIG_DIR%%/db/seeds'
+    migrations: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/db/migrations'
+    seeds: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/seeds/migrations'
 
 environments:
     default_migration_table: phinxlog
@@ -17,8 +17,8 @@ environments:
     development:
         adapter: mysql
         host: localhost
-        name: efsoltel_db_dev
-        user: admin_efsoltel
+        name: admin_eftldbdev
+        user: admin_eftldbdev
         pass: 'xJbTh0Sq0G'
         port: 3306
         charset: utf8
