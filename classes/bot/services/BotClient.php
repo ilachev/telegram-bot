@@ -1,6 +1,6 @@
 <?php
 
-namespace pcs\bot;
+namespace pcs\bot\services;
 
 use pcs\config\MainConfig;
 use PDO;
@@ -17,13 +17,14 @@ class BotClient
 
     public function process()
     {
-        $command = new BotCommandConstructor(
+        $command = new BotHandler(
             new Client($this->config['api']['key']),
             new PDO(
                 'mysql:host=' . $this->config['sql']['host'] . ';dbname='. $this->config['sql']['db_name'] . ';',
                 $this->config['sql']['user'],
                 $this->config['sql']['password']
-            )
+            ),
+            $this->config['admins']
         );
         $command->execCommand();
     }

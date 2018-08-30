@@ -16,6 +16,12 @@ class MainConfig
             ],
             'api' => [
                 'key' => '651882769:AAHPoFaQTkbPUtTMTArHc4ZgyxpmJvTJtrM'
+            ],
+            'admins' => [
+                '30893259', //m.konchevich
+                '177952832', //dshleg
+                '612025923', //Galenko
+                '505904694', //Galenko
             ]
         ];
     }

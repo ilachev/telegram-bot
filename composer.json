@@ -1,5 +1,10 @@
 {
+    "name": "igor-vetrov-dev-team/efsol-telegram",
+    "description": "Telegram Bot for Efsol Voip",
     "require": {
+        "php": ">=7.2",
+        "ext-PDO": "*",
+        "ext-mbstring": "*",
         "telegram-bot/api": "^2.3"
     },
     "autoload": {

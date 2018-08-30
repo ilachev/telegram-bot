@@ -2,7 +2,7 @@
 
 require 'vendor/autoload.php';
 
-use pcs\bot\BotClient;
+use pcs\bot\services\BotClient;
 
 $bot = new BotClient();
 $bot->process();
