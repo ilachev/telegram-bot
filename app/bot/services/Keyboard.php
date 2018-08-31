@@ -3,18 +3,23 @@
 namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
+use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class Keyboard
 {
-    public function getKeyboard($command)
+    public function getKeyboard(Message $message, $command = null)
     {
+        if ($command == null) {
+            $command = $message->getText();
+        }
+
         switch ($command) {
             case CommandHelper::START:
                 return new ReplyKeyboardMarkup(
                     [
                         [
-                            ["text" => "Подписаться", 'request_contact' => true]
+                            ["text" => CommandHelper::SUBSCRIBE, 'request_contact' => true]
                         ]
                     ],
                     true,

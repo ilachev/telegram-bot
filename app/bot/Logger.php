@@ -8,7 +8,7 @@ use Monolog\Handler\FirePHPHandler;
 
 class Logger
 {
-    public static function log($data = null, $error = null)
+    public static function log($message, $data = null, $error = null)
     {
         // Create some handlers
         $stream = new StreamHandler(__DIR__. '/../../logs/app.log', Log::DEBUG);
@@ -19,12 +19,10 @@ class Logger
         $logger->pushHandler($stream);
         $logger->pushHandler($firephp);
 
-        if ($data) {
-            $logger->info($data);
-        }
+        $logger->info($message, [$data]);
 
         if ($error) {
-            $logger->error( $error);
+            $logger->error('', [$error]);
         }
     }
 }

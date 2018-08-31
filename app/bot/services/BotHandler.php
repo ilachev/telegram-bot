@@ -4,13 +4,16 @@ namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\Logger;
+use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Client;
+use TelegramBot\Api\Exception;
+use TelegramBot\Api\Types\Message;
+use TelegramBot\Api\Types\Update;
 
 class BotHandler
 {
     private $commandsList = [
         CommandHelper::START,
-        CommandHelper::UNSUBSCRIBE,
         CommandHelper::ADMIN,
         CommandHelper::LIST,
         CommandHelper::ULIST,
@@ -19,6 +22,8 @@ class BotHandler
     ];
 
     private $allowedRawCommands = [
+        CommandHelper::SUBSCRIBE,
+        CommandHelper::UNSUBSCRIBE,
         CommandHelper::USER_MANAGEMENT,
         CommandHelper::ADDING_MAPPING,
         CommandHelper::DELETING_MAPPING,
@@ -29,65 +34,100 @@ class BotHandler
         CommandHelper::DELETING_DIRECTIONS,
     ];
 
-    private $bot;
-    private $admins;
-
-    public function __construct(Client $bot, $admins)
+    public function on()
     {
-        $this->bot = $bot;
-        $this->admins = $admins;
-    }
+        try {
+            $bot = new Client(API_KEY);
 
-    public function execCommand()
-    {
-        $bot = $this->bot;
-        $admins = $this->admins;
-        $allowedRawCommands = $this->allowedRawCommands;
+            $admins = [
+                '30893259', //m.konchevich
+                '177952832', //dshleg
+                '612025923', //Galenko
+                '505904694', //Galenko
+            ];
 
-        foreach ($this->commandsList as $command) {
-
-            $bot->command($command, function ($message) use ($bot, $admins, $command) {
+            $bot->command(CommandHelper::START, function ($message) use ($bot) {
+                /**
+                 * @var Message $message
+                 * @var BotApi $bot
+                 */
 
                 $answer = new Answer();
                 $keyboard = new Keyboard();
 
                 $chatID = $message->getChat()->getId();
-                Logger::log($chatID);
 
                 $bot->sendMessage(
                     $chatID,
-                    $answer->getAnswer($command, $message, $admins),
+                    $answer->getAnswer($message, CommandHelper::START),
                     'html',
                     false,
                     null,
-                    $keyboard->getKeyboard($command));
+                    $keyboard->getKeyboard($message, CommandHelper::START)
+                );
             });
+
+
+            $allowedRawCommands = $this->allowedRawCommands;
+
+            $bot->on(function(Update $update) use ($bot, $allowedRawCommands) {
+
+                /**
+                 * @var Message $message
+                 * @var BotApi $bot
+                 */
+
+                $answer = new Answer();
+                $keyboard = new Keyboard();
+
+                $message = $update->getMessage();
+                $chatID = $message->getChat()->getId();
+
+                if ((array_search($message->getText(), $allowedRawCommands) !== false)) {
+                    $bot->sendMessage(
+                        $chatID,
+                        $answer->getAnswer($message),
+                        'html',
+                        false,
+                        null,
+                        $keyboard->getKeyboard($message)
+                    );
+                }
+
+            }, function(Update $update) use ($bot) {
+
+                $message = $update->getMessage();
+                $phoneNumber = $message->getContact()->getPhoneNumber();
+
+                if (!empty($phoneNumber) && stripos($phoneNumber, '+') !== false) {
+                    $phoneNumber = str_replace('+', '', $phoneNumber);
+                }
+
+                if ($phoneNumber) {
+                    Logger::log('upd', $phoneNumber);
+
+                    $answer = new Answer();
+                    $keyboard = new Keyboard();
+
+                    $bot->sendMessage(
+                        $chatID,
+                        $answer->getAnswer($message),
+                        'html',
+                        false,
+                        null,
+                        $keyboard->getKeyboard($message)
+                    );
+                    return false;
+                }
+
+                return true;
+            });
+
+            $bot->run();
+
+        } catch (Exception $e) {
+            Logger::log('Exc', $e->getMessage());
         }
 
-        $bot->on(function($update) use ($bot, $admins, $allowedRawCommands) {
-
-            $answer = new Answer();
-            $keyboard = new Keyboard();
-
-            $message = $update->getMessage();
-            $chatID = $message->getChat()->getId();
-            $messageText = $message->getText();
-
-            if (array_search($messageText, $allowedRawCommands) !== false) {
-                $bot->sendMessage(
-                    $chatID,
-                    $answer->getAnswer($messageText, $message, $admins),
-                    'html',
-                    false,
-                    null,
-                    $keyboard->getKeyboard($messageText)
-                );
-            }
-
-        }, function() {
-            return true;
-        });
-
-        $bot->run();
     }
 }

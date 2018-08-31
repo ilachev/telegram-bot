@@ -2,25 +2,41 @@
 
 namespace Pcs\Bot\services;
 
+use Pcs\Bot\Logger;
 use Pcs\Bot\Models\Database;
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\repositories\UserRepository;
+use TelegramBot\Api\Types\Message;
 
 class Answer
 {
-    public function getAnswer($command, $message, $admins)
+    private $userRepository;
+
+    public function __construct()
     {
-        $db = new Database();
+        $this->userRepository = new UserRepository();
+    }
+
+    public function getAnswer(Message $message, $command = null)
+    {
+        if ($command == null) {
+            $command = $message->getText();
+        }
 
         $chatID = $message->getChat()->getId();
-        $messageText = $message->getText();
         $username = $message->getFrom()->getUsername();
 
         switch ($command) {
             case CommandHelper::START:
-                return "Добро пожаловать, {$username} ". PHP_EOL
-                    . "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL
-                    . "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL
-                    . "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+                return "Добро пожаловать, {$username} ". PHP_EOL .
+                    "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL .
+                    "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL .
+                    "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+                break;
+
+            case CommandHelper::SUBSCRIBE:
+                return "Вы успешно подписались на оповещения о пропущенных звонках на номер {$message->getContact()->getLastName()}". PHP_EOL .
+                    " Если это не ваш номер - обратитесь на Хотлайн";
                 break;
 
             case CommandHelper::ADMIN:

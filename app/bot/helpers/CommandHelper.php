@@ -5,7 +5,8 @@ namespace Pcs\Bot\helpers;
 class CommandHelper
 {
     const START = 'start';
-    const UNSUBSCRIBE = 'отписаться';
+    const SUBSCRIBE = 'Подписаться';
+    const UNSUBSCRIBE = 'Отписаться';
     const ADMIN = 'admin';
     const LIST = 'list';
     const ULIST = 'ulist';
