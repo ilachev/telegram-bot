@@ -3,6 +3,7 @@
 namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\Logger;
 use TelegramBot\Api\Client;
 
 class BotHandler
@@ -51,6 +52,7 @@ class BotHandler
                 $keyboard = new Keyboard();
 
                 $chatID = $message->getChat()->getId();
+                Logger::log($chatID);
 
                 $bot->sendMessage(
                     $chatID,
