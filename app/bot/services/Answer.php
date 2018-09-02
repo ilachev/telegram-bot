@@ -5,6 +5,7 @@ namespace Pcs\Bot\services;
 use Pcs\Bot\Logger;
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\ChatRepository;
+use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
 use TelegramBot\Api\Types\Message;
 
@@ -12,11 +13,13 @@ class Answer
 {
     private $userRepository;
     private $chatRepository;
+    private $sessionRepository;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
         $this->chatRepository = new ChatRepository();
+        $this->sessionRepository = new SessionRepository();
     }
 
     public function getAnswer(Message $message, $command = null)

@@ -4,16 +4,19 @@ namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\ChatRepository;
+use Pcs\Bot\repositories\SessionRepository;
 use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class Keyboard
 {
     private $chatRepository;
+    private $sessionRepository;
 
     public function __construct()
     {
         $this->chatRepository = new ChatRepository();
+        $this->sessionRepository = new SessionRepository();
     }
 
     public function getKeyboard(Message $message, $command = null)
