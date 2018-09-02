@@ -12,6 +12,7 @@ class CommandHelper
     const ULIST = 'ulist';
     const USET = 'uset';
     const UNSET = 'unset';
+    const BACK = 'Назад';
 
     const USER_MANAGEMENT = 'Управление пользователями';
     const MANAGE_REDIRECTS = 'Управление переадресацией';
@@ -23,4 +24,6 @@ class CommandHelper
 
     const ADDING_DIRECTIONS = 'Добавить направление';
     const DELETING_DIRECTIONS = 'Удалить направление';
+
+    const VIEW_ALLOWED_DIRECTIONS_REDIRECTS = 'Просмотр разрешенных направлений переадресаций';
 }

@@ -3,6 +3,7 @@
 namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use TelegramBot\Api\Types\Message;
@@ -63,20 +64,6 @@ class Keyboard
                 );
                 break;
 
-            case CommandHelper::ADMIN:
-                $keyboard = new ReplyKeyboardMarkup(
-                    [
-                        [
-                            ['text' => CommandHelper::USER_MANAGEMENT],
-                            ['text' => CommandHelper::MANAGE_REDIRECTS],
-                        ]
-                    ],
-                    true,
-                    true
-                );
-                return $keyboard;
-                break;
-
             case CommandHelper::USER_MANAGEMENT:
                 $keyboard = new ReplyKeyboardMarkup(
                     [
@@ -96,17 +83,58 @@ class Keyboard
                 break;
 
             case CommandHelper::MANAGE_REDIRECTS:
-                $keyboard = new ReplyKeyboardMarkup(
-                    [
+
+                if (!in_array($chatID, $GLOBALS['admins'])) {
+                    $keyboard = [
+                        [
+                            ['text' => CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS],
+                        ],
+                        [
+                            ['text' => CommandHelper::BACK]
+                        ]
+                    ];
+                } else {
+                    $keyboard = [
                         [
                             ['text' => CommandHelper::ADDING_DIRECTIONS],
                             ['text' => CommandHelper::DELETING_DIRECTIONS],
+                        ],
+                        [
+                            ['text' => CommandHelper::BACK]
                         ]
-                    ],
+                    ];
+
+                }
+
+                return new ReplyKeyboardMarkup(
+                    $keyboard,
                     true,
                     true
                 );
-                return $keyboard;
+                break;
+
+            case CommandHelper::BACK:
+
+                $keyboard = [];
+
+                $currentStatus = $this->sessionRepository->getStatus($chatID);
+
+                if ($currentStatus == 4) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+
+                    $keyboard = [
+                        [
+                            ["text" => CommandHelper::MANAGE_REDIRECTS]
+                        ]
+                    ];
+                }
+
+                return new ReplyKeyboardMarkup(
+                    $keyboard,
+                    true,
+                    true
+                );
                 break;
 
             default:

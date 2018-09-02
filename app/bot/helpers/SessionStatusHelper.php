@@ -19,4 +19,15 @@ class SessionStatusHelper
 
     const ADDING_DIRECTIONS = 9;
     const DELETING_DIRECTIONS = 10;
+
+    public static function getPrevCommandByStatus($status)
+    {
+        if ($status == 4) {
+            return '/start';
+        }
+        if ($status == 5) {
+            return 2;
+        }
+        return 0;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Pcs\Bot\services;
 
+use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\Logger;
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\ChatRepository;
@@ -35,6 +36,7 @@ class Answer
             case CommandHelper::START:
 
                 $chat = $this->chatRepository->getChatByChatID($chatID);
+                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
 
                 if (!empty($chat->chat_id)) {
                     $answer = 'Выберите пункт';
@@ -79,6 +81,9 @@ class Answer
                 break;
 
             case CommandHelper::MANAGE_REDIRECTS:
+
+                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+
                 return 'Выберите пункт';
                 break;
 
@@ -100,6 +105,19 @@ class Answer
 
             case CommandHelper::DELETING_DIRECTIONS:
                 return 'Введите код страны и кол-во символов';
+                break;
+
+            case CommandHelper::BACK:
+
+                $answer = ' ';
+                $currentStatus = $this->sessionRepository->getStatus($chatID);
+
+                Logger::log('asd', $currentStatus);
+                if ($currentStatus == 4) {
+                    $answer = 'Выберите пункт';
+                }
+
+                return $answer;
                 break;
 
             default:

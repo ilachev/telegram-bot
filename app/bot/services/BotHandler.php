@@ -4,6 +4,7 @@ namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\Logger;
+use Pcs\Bot\repositories\SessionRepository;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Client;
 use TelegramBot\Api\Exception;
@@ -21,6 +22,7 @@ class BotHandler
     ];
 
     private $allowedRawCommands = [
+        CommandHelper::BACK,
         CommandHelper::SUBSCRIBE,
         CommandHelper::UNSUBSCRIBE,
         CommandHelper::USER_MANAGEMENT,
@@ -32,6 +34,13 @@ class BotHandler
         CommandHelper::ADDING_DIRECTIONS,
         CommandHelper::DELETING_DIRECTIONS,
     ];
+
+    private $sessionRepository;
+
+    public function __construct()
+    {
+        $this->sessionRepository = new SessionRepository();
+    }
 
     public function on()
     {
@@ -100,6 +109,10 @@ class BotHandler
                 $message = $update->getMessage();
                 $chatID = $message->getChat()->getId();
 
+                if ($this->sessionRepository->getStatus($chatID) > 0) {
+                    return true;
+                }
+
                 if (!empty($message->getContact()->getPhoneNumber())) {
 
                     $answer = new Answer();
@@ -113,10 +126,8 @@ class BotHandler
                         null,
                         $keyboard->getKeyboard($message, CommandHelper::SUBSCRIBE)
                     );
-
                     return false;
                 }
-
                 return true;
             });
 
