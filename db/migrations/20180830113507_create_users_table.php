@@ -38,7 +38,7 @@ class CreateUsersTable extends AbstractMigration
             ->addColumn('phone', 'string', ['limit' => 255])
             ->addColumn('full_name', 'string', ['limit' => 255])
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('updated_at', 'timestamp')
+            ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->create();
     }
 }

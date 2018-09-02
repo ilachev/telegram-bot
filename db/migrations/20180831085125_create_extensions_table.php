@@ -37,7 +37,7 @@ class CreateExtensionsTable extends AbstractMigration
         $table->addColumn('user_id', 'integer')
             ->addColumn('chat_id', 'string')
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('updated_at', 'timestamp')
+            ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->create();
     }
 }

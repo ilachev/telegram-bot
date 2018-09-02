@@ -37,7 +37,7 @@ class CreateRedirectsTable extends AbstractMigration
         $table->addColumn('user_id', 'integer')
             ->addColumn('redirect', 'string')
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('updated_at', 'timestamp')
+            ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->create();
     }
 }

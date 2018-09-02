@@ -37,7 +37,7 @@ class CreateMappingsTable extends AbstractMigration
         $table->addColumn('country', 'string', ['limit' => 255])
             ->addColumn('mapping', 'string', ['limit' => 255])
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('updated_at', 'timestamp')
+            ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->create();
     }
 }
