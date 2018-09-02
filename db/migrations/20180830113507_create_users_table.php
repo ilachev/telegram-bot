@@ -34,14 +34,11 @@ class CreateUsersTable extends AbstractMigration
     {
         $table = $this->table('users');
 
-        $table->addColumn('chat_id', 'string', ['limit' => 255])
-            ->addColumn('username', 'string', ['limit' => 255])
+        $table->addColumn('extension', 'integer', ['limit' => \Phinx\Db\Adapter\MysqlAdapter::INT_SMALL])
             ->addColumn('phone', 'string', ['limit' => 255])
             ->addColumn('full_name', 'string', ['limit' => 255])
-            ->addColumn('status', 'integer', ['default' => 0, 'limit' => \Phinx\Db\Adapter\MysqlAdapter::INT_TINY])
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'timestamp')
-            ->addIndex(['chat_id', 'username'], ['unique' => true])
             ->create();
     }
 }

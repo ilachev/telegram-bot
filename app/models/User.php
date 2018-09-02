@@ -16,16 +16,16 @@ class User extends Model
 {
     protected $table = 'users';
     protected $fillable = [
-        'chat_id', 'username', 'phone', 'full_name', 'status'
+        'chat_id', 'extension', 'phone', 'full_name', 'status'
     ];
 
     /**
-     * Получить добавочный пользователя
+     * Получить chat_id пользователя
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function extension()
     {
-        return $this->hasOne(Extension::class);
+        return $this->hasOne(Chat::class);
     }
 }

@@ -17,22 +17,19 @@ class UsersSeeder extends AbstractSeed
     {
         $data = [
             [
-                'username' => 'imp_f',
+                'extension' => '100',
                 'phone' => '79995153244',
                 'full_name' => 'Карачев Илья',
-                'chat_id' => '505904694',
             ],
             [
-                'username' => 'UT7AT',
+                'extension' => '200',
                 'phone' => '',
                 'full_name' => '',
-                'chat_id' => '252911662',
             ],
             [
-                'username' => 'spr09',
+                'extension' => '096',
                 'phone' => '',
                 'full_name' => '',
-                'chat_id' => '276998190',
             ]
         ];
 

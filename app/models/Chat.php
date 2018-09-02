@@ -4,15 +4,19 @@ namespace Pcs\Bot\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Extension extends Model
+/**
+ * @property string $chat_id
+ * @property integer $user_id
+ */
+class Chat extends Model
 {
-    protected $table = 'extensions';
+    protected $table = 'chats';
     protected $fillable = [
-        'user_id', 'extension'
+        'user_id', 'chat_id'
     ];
 
     /**
-     * Получить пользователя, с данным добавочным
+     * Получить пользователя, с данным chat_id
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

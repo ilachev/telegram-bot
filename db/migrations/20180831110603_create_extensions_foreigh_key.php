@@ -32,7 +32,7 @@ class CreateExtensionsForeighKey extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('extensions');
+        $table = $this->table('chats');
         $table->addForeignKey('user_id', 'users', 'id', ['delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'])
             ->save();
 

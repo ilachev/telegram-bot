@@ -8,12 +8,8 @@ class UserRepository
 {
     public function getUserByPhone($phone)
     {
-        $user = User::where('phone', '=', $phone)->toArray();
-        return $user;
-    }
+        $user = User::all()->where('phone', '=', $phone)->first();
 
-    public function getExtension($user)
-    {
-        return User::find($user)->extension();
+        return $user;
     }
 }

@@ -13,7 +13,6 @@ use TelegramBot\Api\Types\Update;
 class BotHandler
 {
     private $commandsList = [
-        CommandHelper::START,
         CommandHelper::ADMIN,
         CommandHelper::LIST,
         CommandHelper::ULIST,
@@ -71,7 +70,6 @@ class BotHandler
             $allowedRawCommands = $this->allowedRawCommands;
 
             $bot->on(function(Update $update) use ($bot, $allowedRawCommands) {
-
                 /**
                  * @var Message $message
                  * @var BotApi $bot
@@ -95,28 +93,27 @@ class BotHandler
                 }
 
             }, function(Update $update) use ($bot) {
+                /**
+                 * @var BotApi $bot
+                 */
 
                 $message = $update->getMessage();
-                $phoneNumber = $message->getContact()->getPhoneNumber();
+                $chatID = $message->getChat()->getId();
 
-                if (!empty($phoneNumber) && stripos($phoneNumber, '+') !== false) {
-                    $phoneNumber = str_replace('+', '', $phoneNumber);
-                }
-
-                if ($phoneNumber) {
-                    Logger::log('upd', $phoneNumber);
+                if (!empty($message->getContact()->getPhoneNumber())) {
 
                     $answer = new Answer();
                     $keyboard = new Keyboard();
 
                     $bot->sendMessage(
                         $chatID,
-                        $answer->getAnswer($message),
+                        $answer->getAnswer($message, CommandHelper::SUBSCRIBE),
                         'html',
                         false,
                         null,
-                        $keyboard->getKeyboard($message)
+                        $keyboard->getKeyboard($message, CommandHelper::SUBSCRIBE)
                     );
+
                     return false;
                 }
 

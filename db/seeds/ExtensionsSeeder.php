@@ -17,20 +17,20 @@ class ExtensionsSeeder extends AbstractSeed
     {
         $data = [
             [
+                'chat_id' => '505904694',
                 'user_id' => '1',
-                'extension' => '100',
             ],
             [
+                'chat_id' => '2',
                 'user_id' => '2',
-                'extension' => '102',
             ],
             [
+                'chat_id' => '3',
                 'user_id' => '3',
-                'extension' => '123',
             ],
         ];
 
-        $user = $this->table('extensions');
+        $user = $this->table('chats');
         $user->insert($data)->save();
     }
 }

@@ -32,10 +32,10 @@ class CreateExtensionsTable extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('extensions');
+        $table = $this->table('chats');
 
         $table->addColumn('user_id', 'integer')
-            ->addColumn('extension', 'integer', ['limit' => \Phinx\Db\Adapter\MysqlAdapter::INT_SMALL])
+            ->addColumn('chat_id', 'string')
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'timestamp')
             ->create();

@@ -3,18 +3,20 @@
 namespace Pcs\Bot\services;
 
 use Pcs\Bot\Logger;
-use Pcs\Bot\Models\Database;
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\UserRepository;
 use TelegramBot\Api\Types\Message;
 
 class Answer
 {
     private $userRepository;
+    private $chatRepository;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
+        $this->chatRepository = new ChatRepository();
     }
 
     public function getAnswer(Message $message, $command = null)
@@ -28,78 +30,45 @@ class Answer
 
         switch ($command) {
             case CommandHelper::START:
-                return "Добро пожаловать, {$username} ". PHP_EOL .
-                    "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL .
-                    "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL .
-                    "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+
+                $chat = $this->chatRepository->getChatByChatID($chatID);
+
+                if (!empty($chat->chat_id)) {
+                    $answer = 'Выберите пункт';
+                } else {
+                    $answer = "Добро пожаловать, {$username} ". PHP_EOL .
+                        "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL .
+                        "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL .
+                        "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+                }
+
+                return $answer;
                 break;
 
             case CommandHelper::SUBSCRIBE:
-                return "Вы успешно подписались на оповещения о пропущенных звонках на номер {$message->getContact()->getLastName()}". PHP_EOL .
-                    " Если это не ваш номер - обратитесь на Хотлайн";
-                break;
 
-            case CommandHelper::ADMIN:
-                if (in_array($chatID, $admins)) {
-                    return "/list - просмотр списка подписок" . PHP_EOL
-                        . "/ulist - просотр списка сопоставлений" . PHP_EOL
-                        . "/uset {internal} {mobile}- Задать сопоставление внутренний-номер" . PHP_EOL
-                        . "/unset {internal} {mobile} - Удалить сопоставление и подписку" . PHP_EOL
-                    ;
+                $phoneNumber = $message->getContact()->getPhoneNumber();
+
+                if (!empty($phoneNumber) && stripos($phoneNumber, '+') !== false) {
+                    $phoneNumber = str_replace('+', '', $phoneNumber);
+                }
+
+                $user = $this->userRepository->getUserByPhone($phoneNumber);
+
+                if (!empty($user->extension)) {
+
+                    $this->chatRepository->saveChatID(
+                        $message->getChat()->getId(),
+                        $user->id
+                    );
+
+                    $answer = "Вы успешно подписались на оповещения о пропущенных звонках на номер {$user->extension}". PHP_EOL .
+                        "Если это не ваш номер - обратитесь на Хотлайн";
                 } else {
-                    return 'Нет доступа';
+                    $answer = "Данный номер мобильного телефона не занесен в базу данных сотрудников. Обратитесь на Хотлайн.";
                 }
-                break;
 
-            case CommandHelper::LIST:
-                if (in_array($chatID, $admins)) {
-                    $reply	 = "Список подписок" . PHP_EOL;
-                    $numbers = $dbQuery->getNumbers();
-
-                    foreach ($numbers as $number) {
-                        $reply .= "Внутренний: " . $number['number'] . ' Пользователь: @' . $number['name'] . ' [' . $number['tg_number'] . ']' . PHP_EOL;
-                    }
-                    return $reply;
-                }
-                break;
-
-            case CommandHelper::ULIST:
-                if (in_array($chatID, $admins)) {
-                    $reply	 = "Список сопоставлений" . PHP_EOL;
-                    $numbers = $dbQuery->getAllNumbers();
-
-                    foreach ($numbers as $number) {
-                        $reply .= "Внтурений: " . $number['internal'] . ' Мобильный: ' . $number['tg_number'] . PHP_EOL;
-                    }
-                    return $reply;
-                }
-                break;
-
-            case CommandHelper::USET:
-                if (in_array($chatID, $admins)) {
-                    $cmd_args = explode(' ', $messageText);
-                    $reply = "Неверные параметры";
-                    if (count($cmd_args) == 3 && is_numeric($cmd_args[1])) {
-                        if ($db->exec('insert ignore into numbers(internal,tg_number) values(' . $cmd_args[1] . ',' . $db->quote($cmd_args[2]) . ');')) {
-                            $reply = 'Успешно';
-                        }
-                    }
-                    return $reply;
-                }
-                break;
-
-            case CommandHelper::UNSET:
-                if (in_array($chatID, $admins)) {
-                    $cmd_args = explode(' ', $messageText);
-                    $reply = "Неверные параметры";
-                    if (count($cmd_args) == 3 && is_numeric($cmd_args[1])) {
-                        if ($db->exec('delete from numbers where internal=' . $cmd_args[1] . ' and tg_number=' . $db->quote($cmd_args[2]))) {
-                            $db->exec('delete from subs where number=' . $cmd_args[1]);
-                            $reply = 'Успешно';
-                        }
-                    }
-                    return $reply;
-                }
+                return $answer;
                 break;
 
             case CommandHelper::USER_MANAGEMENT:
