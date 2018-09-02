@@ -6,6 +6,7 @@ use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\Logger;
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\ChatRepository;
+use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
 use TelegramBot\Api\Types\Message;
@@ -15,12 +16,14 @@ class Answer
     private $userRepository;
     private $chatRepository;
     private $sessionRepository;
+    private $mappingRepository;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
         $this->chatRepository = new ChatRepository();
         $this->sessionRepository = new SessionRepository();
+        $this->mappingRepository = new MappingRepository();
     }
 
     public function getAnswer(Message $message, $command = null)
@@ -107,16 +110,38 @@ class Answer
                 return 'Введите код страны и кол-во символов';
                 break;
 
+            case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
+
+                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS);
+
+                $mappings = $this->mappingRepository->getMappings();
+
+                if (!empty($mappings)) {
+                    $answer = '';
+                    foreach ($mappings as $mapping) {
+                        $answer .= $mapping['country'] . ' ' . $mapping['mapping'] . PHP_EOL;
+                    }
+                } else {
+                    $answer = 'Направлений для переадресаций не найдено';
+                }
+
+                return $answer;
+                break;
+
+            case CommandHelper::ADDING_EXTENSION_REDIRECT:
+                return 'Введите код страны и кол-во символов';
+                break;
+
             case CommandHelper::BACK:
 
                 $answer = ' ';
                 $currentStatus = $this->sessionRepository->getStatus($chatID);
 
-                Logger::log('asd', $currentStatus);
-                if ($currentStatus == 4) {
+                if ($currentStatus == SessionStatusHelper::MANAGE_REDIRECTS) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
                     $answer = 'Выберите пункт';
                 }
-
                 return $answer;
                 break;
 

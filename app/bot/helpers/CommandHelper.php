@@ -26,4 +26,5 @@ class CommandHelper
     const DELETING_DIRECTIONS = 'Удалить направление';
 
     const VIEW_ALLOWED_DIRECTIONS_REDIRECTS = 'Просмотр разрешенных направлений переадресаций';
+    const ADDING_EXTENSION_REDIRECT = 'Установка номера для переадресации';
 }

@@ -6,6 +6,7 @@ use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\SessionRepository;
+use Pcs\Bot\services\keyboard\ManageRedirectsKeyboard;
 use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -84,30 +85,34 @@ class Keyboard
 
             case CommandHelper::MANAGE_REDIRECTS:
 
-                if (!in_array($chatID, $GLOBALS['admins'])) {
-                    $keyboard = [
-                        [
-                            ['text' => CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS],
-                        ],
-                        [
-                            ['text' => CommandHelper::BACK]
-                        ]
-                    ];
-                } else {
-                    $keyboard = [
-                        [
-                            ['text' => CommandHelper::ADDING_DIRECTIONS],
-                            ['text' => CommandHelper::DELETING_DIRECTIONS],
-                        ],
-                        [
-                            ['text' => CommandHelper::BACK]
-                        ]
-                    ];
-
-                }
+                $keyboard = ManageRedirectsKeyboard::get($chatID);
 
                 return new ReplyKeyboardMarkup(
                     $keyboard,
+                    true,
+                    true
+                );
+                break;
+
+            case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
+                return new ReplyKeyboardMarkup(
+                    [
+                        [
+                            ["text" => CommandHelper::BACK]
+                        ]
+                    ],
+                    true,
+                    true
+                );
+                break;
+
+            case CommandHelper::ADDING_EXTENSION_REDIRECT:
+                return new ReplyKeyboardMarkup(
+                    [
+                        [
+                            ["text" => CommandHelper::BACK]
+                        ]
+                    ],
                     true,
                     true
                 );
@@ -119,7 +124,7 @@ class Keyboard
 
                 $currentStatus = $this->sessionRepository->getStatus($chatID);
 
-                if ($currentStatus == 4) {
+                if ($currentStatus == SessionStatusHelper::MANAGE_REDIRECTS) {
 
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
 
@@ -128,6 +133,10 @@ class Keyboard
                             ["text" => CommandHelper::MANAGE_REDIRECTS]
                         ]
                     ];
+                } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+
+                    $keyboard = ManageRedirectsKeyboard::get($chatID);
                 }
 
                 return new ReplyKeyboardMarkup(

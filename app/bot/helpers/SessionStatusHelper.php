@@ -20,14 +20,6 @@ class SessionStatusHelper
     const ADDING_DIRECTIONS = 9;
     const DELETING_DIRECTIONS = 10;
 
-    public static function getPrevCommandByStatus($status)
-    {
-        if ($status == 4) {
-            return '/start';
-        }
-        if ($status == 5) {
-            return 2;
-        }
-        return 0;
-    }
+    const VIEW_ALLOWED_DIRECTIONS_REDIRECTS = 11;
+    const ADDING_EXTENSION_REDIRECT = 12;
 }

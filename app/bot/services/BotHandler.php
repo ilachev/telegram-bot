@@ -33,6 +33,8 @@ class BotHandler
         CommandHelper::MANAGE_REDIRECTS,
         CommandHelper::ADDING_DIRECTIONS,
         CommandHelper::DELETING_DIRECTIONS,
+        CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS,
+        CommandHelper::ADDING_EXTENSION_REDIRECT,
     ];
 
     private $sessionRepository;
