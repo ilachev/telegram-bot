@@ -6,6 +6,7 @@ use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\SessionRepository;
+use Pcs\Bot\services\keyboard\AddingRedirectKeyboard;
 use Pcs\Bot\services\keyboard\ManageRedirectsKeyboard;
 use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
@@ -106,13 +107,25 @@ class Keyboard
                 );
                 break;
 
-            case CommandHelper::ADDING_EXTENSION_REDIRECT:
+            case CommandHelper::ADDING_REDIRECT:
+                $keyboard = AddingRedirectKeyboard::get();
+
                 return new ReplyKeyboardMarkup(
+                    $keyboard,
+                    true,
+                    true
+                );
+                break;
+
+            case CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER:
+                $keyboard = $keyboard = [
                     [
-                        [
-                            ["text" => CommandHelper::BACK]
-                        ]
-                    ],
+                        ["text" => CommandHelper::BACK]
+                    ]
+                ];
+
+                return new ReplyKeyboardMarkup(
+                    $keyboard,
                     true,
                     true
                 );
@@ -137,6 +150,22 @@ class Keyboard
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
 
                     $keyboard = ManageRedirectsKeyboard::get($chatID);
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_EXTENSION_REDIRECT) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS);
+
+                    $keyboard = AddingRedirectKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_EXTENSION_REDIRECT);
+
+                    $keyboard = AddingRedirectKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+
+                    $keyboard = [
+                        [
+                            ["text" => CommandHelper::MANAGE_REDIRECTS]
+                        ]
+                    ];
                 }
 
                 return new ReplyKeyboardMarkup(

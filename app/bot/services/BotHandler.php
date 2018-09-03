@@ -3,6 +3,7 @@
 namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\SessionRepository;
 use TelegramBot\Api\BotApi;
@@ -34,7 +35,8 @@ class BotHandler
         CommandHelper::ADDING_DIRECTIONS,
         CommandHelper::DELETING_DIRECTIONS,
         CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS,
-        CommandHelper::ADDING_EXTENSION_REDIRECT,
+        CommandHelper::ADDING_REDIRECT,
+        CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER,
     ];
 
     private $sessionRepository;
@@ -92,16 +94,14 @@ class BotHandler
                 $message = $update->getMessage();
                 $chatID = $message->getChat()->getId();
 
-                if ((array_search($message->getText(), $allowedRawCommands) !== false)) {
-                    $bot->sendMessage(
-                        $chatID,
-                        $answer->getAnswer($message),
-                        'html',
-                        false,
-                        null,
-                        $keyboard->getKeyboard($message)
-                    );
-                }
+                $bot->sendMessage(
+                    $chatID,
+                    $answer->getAnswer($message),
+                    'html',
+                    false,
+                    null,
+                    $keyboard->getKeyboard($message)
+                );
 
             }, function(Update $update) use ($bot) {
                 /**

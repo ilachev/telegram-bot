@@ -12,7 +12,7 @@ class ManageRedirectsKeyboard
             $keyboard = [
                 [
                     ['text' => CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS],
-                    ['text' => CommandHelper::ADDING_EXTENSION_REDIRECT],
+                    ['text' => CommandHelper::ADDING_REDIRECT],
                 ],
                 [
                     ['text' => CommandHelper::BACK]

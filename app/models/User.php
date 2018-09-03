@@ -5,10 +5,9 @@ namespace Pcs\Bot\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
- * @property string $uid
- * @property string $name
+ * @property integer $extension
  * @property string $phone
+ * @property string $full_name
  * @property integer $created_at
  * @property integer $updated_at
  */
@@ -16,7 +15,7 @@ class User extends Model
 {
     protected $table = 'users';
     protected $fillable = [
-        'chat_id', 'extension', 'phone', 'full_name', 'status'
+        'extension', 'phone', 'full_name'
     ];
 
     /**
@@ -24,8 +23,13 @@ class User extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function extension()
+    public function chat()
     {
         return $this->hasOne(Chat::class);
+    }
+
+    public function redirect()
+    {
+        return $this->hasOne(Redirect::class);
     }
 }

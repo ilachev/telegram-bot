@@ -7,8 +7,12 @@ use Pcs\Bot\Logger;
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\MappingRepository;
+use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
+use Pcs\Bot\services\answer\AddingRedirectAnotherNumberAnswer;
+use Pcs\Bot\services\answer\AddingRedirectAnswer;
+use Pcs\Bot\services\answer\CreateRedirectNumberAnswer;
 use TelegramBot\Api\Types\Message;
 
 class Answer
@@ -17,6 +21,7 @@ class Answer
     private $chatRepository;
     private $sessionRepository;
     private $mappingRepository;
+    private $redirectRepository;
 
     public function __construct()
     {
@@ -24,6 +29,7 @@ class Answer
         $this->chatRepository = new ChatRepository();
         $this->sessionRepository = new SessionRepository();
         $this->mappingRepository = new MappingRepository();
+        $this->redirectRepository = new RedirectRepository();
     }
 
     public function getAnswer(Message $message, $command = null)
@@ -34,6 +40,7 @@ class Answer
 
         $chatID = $message->getChat()->getId();
         $username = $message->getFrom()->getUsername();
+        $currentStatus = $this->sessionRepository->getStatus($chatID);
 
         switch ($command) {
             case CommandHelper::START:
@@ -112,12 +119,13 @@ class Answer
 
             case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
 
+                $answer = '';
+
                 $this->sessionRepository->setStatus($chatID, SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS);
 
                 $mappings = $this->mappingRepository->getMappings();
 
                 if (!empty($mappings)) {
-                    $answer = '';
                     foreach ($mappings as $mapping) {
                         $answer .= $mapping['country'] . ' ' . $mapping['mapping'] . PHP_EOL;
                     }
@@ -128,24 +136,40 @@ class Answer
                 return $answer;
                 break;
 
-            case CommandHelper::ADDING_EXTENSION_REDIRECT:
-                return 'Введите код страны и кол-во символов';
+            case CommandHelper::ADDING_REDIRECT:
+
+                return AddingRedirectAnswer::get($chatID);
+                break;
+
+            case CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER:
+
+                return AddingRedirectAnotherNumberAnswer::get($chatID);
                 break;
 
             case CommandHelper::BACK:
 
                 $answer = ' ';
-                $currentStatus = $this->sessionRepository->getStatus($chatID);
 
                 if ($currentStatus == SessionStatusHelper::MANAGE_REDIRECTS) {
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_EXTENSION_REDIRECT) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
+                    $answer = AddingRedirectAnswer::get($chatID);
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
                     $answer = 'Выберите пункт';
                 }
                 return $answer;
                 break;
 
             default:
+
+                if ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
+                    return CreateRedirectNumberAnswer::get($chatID, $message->getText());
+                }
+
                 return 'Команда не существует';
                 break;
         }
