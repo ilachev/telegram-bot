@@ -13,6 +13,7 @@ use Pcs\Bot\repositories\UserRepository;
 use Pcs\Bot\services\answer\AddingRedirectAnotherNumberAnswer;
 use Pcs\Bot\services\answer\AddingRedirectAnswer;
 use Pcs\Bot\services\answer\CreateRedirectNumberAnswer;
+use Pcs\Bot\services\answer\ViewAllowedDirectionsAnswer;
 use TelegramBot\Api\Types\Message;
 
 class Answer
@@ -119,21 +120,7 @@ class Answer
 
             case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
 
-                $answer = '';
-
-                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS);
-
-                $mappings = $this->mappingRepository->getMappings();
-
-                if (!empty($mappings)) {
-                    foreach ($mappings as $mapping) {
-                        $answer .= $mapping['country'] . ' ' . $mapping['mapping'] . PHP_EOL;
-                    }
-                } else {
-                    $answer = 'Направлений для переадресаций не найдено';
-                }
-
-                return $answer;
+                return ViewAllowedDirectionsAnswer::get($chatID);
                 break;
 
             case CommandHelper::ADDING_REDIRECT:
