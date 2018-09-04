@@ -108,7 +108,7 @@ class Keyboard
                 break;
 
             case CommandHelper::ADDING_REDIRECT:
-                $keyboard = AddingRedirectKeyboard::get();
+                $keyboard = AddingRedirectKeyboard::get($chatID);
 
                 return new ReplyKeyboardMarkup(
                     $keyboard,
