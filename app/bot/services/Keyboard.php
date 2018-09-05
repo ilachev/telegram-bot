@@ -7,8 +7,14 @@ use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\SessionRepository;
-use Pcs\Bot\services\keyboard\AddingRedirectKeyboard;
-use Pcs\Bot\services\keyboard\ManageRedirectsKeyboard;
+use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
+use Pcs\Bot\services\keyboard\admin\AdminAddingDirectionsKeyboard;
+use Pcs\Bot\services\keyboard\admin\AdminManageRedirectsKeyboard;
+use Pcs\Bot\services\keyboard\admin\AdminStartKeyboard;
+use Pcs\Bot\services\keyboard\NotAdminKeyboard;
+use Pcs\Bot\services\keyboard\user\AddingRedirectKeyboard;
+use Pcs\Bot\services\keyboard\user\ManageRedirectsKeyboard;
+use Pcs\Bot\services\keyboard\user\StartKeyboard;
 use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -16,11 +22,13 @@ class Keyboard
 {
     private $chatRepository;
     private $sessionRepository;
+    private $adminList;
 
     public function __construct()
     {
         $this->chatRepository = new ChatRepository();
         $this->sessionRepository = new SessionRepository();
+        $this->adminList = $GLOBALS['admins'];
     }
 
     public function getKeyboard(Message $message, $command = null)
@@ -33,27 +41,11 @@ class Keyboard
 
         switch ($command) {
             case CommandHelper::START:
-
-                $chat = $this->chatRepository->getChatByChatID($chatID);
-
-                if (!empty($chat->chat_id)) {
-                    $keyboard = [
-                        ["text" => CommandHelper::MANAGE_REDIRECTS]
-                    ];
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminStartKeyboard::get($chatID);
                 } else {
-                    $keyboard = [
-                        ["text" => CommandHelper::SUBSCRIBE, 'request_contact' => true]
-                    ];
+                    return StartKeyboard::get($chatID);
                 }
-
-                return new ReplyKeyboardMarkup(
-                    [
-                        $keyboard
-                    ],
-                    true,
-                    true
-                );
-                break;
 
             case CommandHelper::SUBSCRIBE:
                 return new ReplyKeyboardMarkup(
@@ -65,7 +57,6 @@ class Keyboard
                     true,
                     true
                 );
-                break;
 
             case CommandHelper::USER_MANAGEMENT:
                 $keyboard = new ReplyKeyboardMarkup(
@@ -83,18 +74,20 @@ class Keyboard
                     true
                 );
                 return $keyboard;
-                break;
 
             case CommandHelper::MANAGE_REDIRECTS:
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminManageRedirectsKeyboard::get($chatID);
+                } else {
+                    return ManageRedirectsKeyboard::get($chatID);
+                }
 
-                $keyboard = ManageRedirectsKeyboard::get($chatID);
-
-                return new ReplyKeyboardMarkup(
-                    $keyboard,
-                    true,
-                    true
-                );
-                break;
+            case CommandHelper::ADDING_DIRECTIONS:
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminAddingDirectionsKeyboard::get($chatID);
+                } else {
+                    return NotAdminKeyboard::get();
+                }
 
             case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
                 return new ReplyKeyboardMarkup(
@@ -106,17 +99,9 @@ class Keyboard
                     true,
                     true
                 );
-                break;
 
             case CommandHelper::ADDING_REDIRECT:
-                $keyboard = AddingRedirectKeyboard::get($chatID);
-
-                return new ReplyKeyboardMarkup(
-                    $keyboard,
-                    true,
-                    true
-                );
-                break;
+                return AddingRedirectKeyboard::get($chatID);
 
             case CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER:
                 $keyboard = $keyboard = [
@@ -130,19 +115,11 @@ class Keyboard
                     true,
                     true
                 );
-                break;
 
             case CommandHelper::NO:
+
                 $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
-
-                $keyboard = ManageRedirectsKeyboard::get($chatID);
-
-                return new ReplyKeyboardMarkup(
-                    $keyboard,
-                    true,
-                    true
-                );
-                break;
+                return ManageRedirectsKeyboard::get($chatID);
 
             case CommandHelper::YES:
                 $keyboard = [
@@ -156,7 +133,6 @@ class Keyboard
                     true,
                     true
                 );
-                break;
 
             case CommandHelper::BACK:
 
@@ -174,25 +150,38 @@ class Keyboard
                         ]
                     ];
                 } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
 
-                    $keyboard = ManageRedirectsKeyboard::get($chatID);
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                    return ManageRedirectsKeyboard::get($chatID);
+
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_EXTENSION_REDIRECT) {
+
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                    return ManageRedirectsKeyboard::get($chatID);
 
-                    $keyboard = ManageRedirectsKeyboard::get($chatID);
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
+
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_EXTENSION_REDIRECT);
-
                     $keyboard = AddingRedirectKeyboard::get($chatID);
-                } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
 
-                    $keyboard = [
-                        [
-                            ["text" => CommandHelper::MANAGE_REDIRECTS]
-                        ]
-                    ];
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                    return ManageRedirectsKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::ADMIN_MANAGE_REDIRECTS) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::NOT_ADMIN) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                    return StartKeyboard::get($chatID);
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTIONS) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
+                    return AdminManageRedirectsKeyboard::get($chatID);
                 }
 
                 return new ReplyKeyboardMarkup(
@@ -200,11 +189,9 @@ class Keyboard
                     true,
                     true
                 );
-                break;
 
             default:
                 return null;
-                break;
         }
     }
 }

@@ -5,14 +5,14 @@ namespace Pcs\Bot\services\answer;
 use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\repositories\SessionRepository;
 
-class ManageRedirectsAnswer
+class NotAdminAnswer
 {
     public static function get($chatID)
     {
         $sessionRepository = new SessionRepository();
 
-        $sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+        $sessionRepository->setStatus($chatID, SessionStatusHelper::NOT_ADMIN);
 
-        return 'Выберите пункт';
+        return 'Вы не администратор';
     }
 }

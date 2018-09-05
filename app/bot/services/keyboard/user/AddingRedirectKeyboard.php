@@ -1,11 +1,12 @@
 <?php
 
-namespace Pcs\Bot\services\keyboard;
+namespace Pcs\Bot\services\keyboard\user;
 
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\UserRepository;
+use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class AddingRedirectKeyboard
 {
@@ -63,6 +64,10 @@ class AddingRedirectKeyboard
             }
         }
 
-        return $keyboard;
+        return new ReplyKeyboardMarkup(
+            $keyboard,
+            true,
+            true
+        );
     }
 }

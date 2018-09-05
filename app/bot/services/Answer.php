@@ -10,11 +10,17 @@ use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
-use Pcs\Bot\services\answer\AddingRedirectAnotherNumberAnswer;
-use Pcs\Bot\services\answer\AddingRedirectAnswer;
-use Pcs\Bot\services\answer\CreateRedirectNumberAnswer;
-use Pcs\Bot\services\answer\ManageRedirectsAnswer;
-use Pcs\Bot\services\answer\ViewAllowedDirectionsAnswer;
+use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
+use Pcs\Bot\services\answer\admin\AdminManageRedirectsAnswer;
+use Pcs\Bot\services\answer\admin\AdminStartAnswer;
+use Pcs\Bot\services\answer\NotAdminAnswer;
+use Pcs\Bot\services\answer\user\AddingRedirectAnotherNumberAnswer;
+use Pcs\Bot\services\answer\user\AddingRedirectAnswer;
+use Pcs\Bot\services\answer\user\CreateRedirectNumberAnswer;
+use Pcs\Bot\services\answer\user\ManageRedirectsAnswer;
+use Pcs\Bot\services\answer\user\StartAnswer;
+use Pcs\Bot\services\answer\user\SubscribeAnswer;
+use Pcs\Bot\services\answer\user\ViewAllowedDirectionsAnswer;
 use TelegramBot\Api\Types\Message;
 
 class Answer
@@ -24,6 +30,7 @@ class Answer
     private $sessionRepository;
     private $mappingRepository;
     private $redirectRepository;
+    private $adminList;
 
     public function __construct()
     {
@@ -32,6 +39,7 @@ class Answer
         $this->sessionRepository = new SessionRepository();
         $this->mappingRepository = new MappingRepository();
         $this->redirectRepository = new RedirectRepository();
+        $this->adminList = $GLOBALS['admins'];
     }
 
     public function getAnswer(Message $message, $command = null)
@@ -46,95 +54,58 @@ class Answer
 
         switch ($command) {
             case CommandHelper::START:
-
-                $chat = $this->chatRepository->getChatByChatID($chatID);
-                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
-
-                if (!empty($chat->chat_id)) {
-                    $answer = 'Выберите пункт';
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminStartAnswer::get($chatID, $username);
                 } else {
-                    $answer = "Добро пожаловать, {$username} ". PHP_EOL .
-                        "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL .
-                        "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL .
-                        "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+                    return StartAnswer::get($chatID, $username);
                 }
-
-                return $answer;
-                break;
 
             case CommandHelper::SUBSCRIBE:
-
-                $phoneNumber = $message->getContact()->getPhoneNumber();
-
-                if (!empty($phoneNumber) && stripos($phoneNumber, '+') !== false) {
-                    $phoneNumber = str_replace('+', '', $phoneNumber);
-                }
-
-                $user = $this->userRepository->getUserByPhone($phoneNumber);
-
-                if (!empty($user->extension)) {
-
-                    $this->chatRepository->saveChatID(
-                        $message->getChat()->getId(),
-                        $user->id
-                    );
-
-                    $answer = "Вы успешно подписались на оповещения о пропущенных звонках на номер {$user->extension}". PHP_EOL .
-                        "Если это не ваш номер - обратитесь на Хотлайн";
-                } else {
-                    $answer = "Данный номер мобильного телефона не занесен в базу данных сотрудников. Обратитесь на Хотлайн.";
-                }
-
-                return $answer;
-                break;
+                return SubscribeAnswer::get($message);
 
             case CommandHelper::USER_MANAGEMENT:
                 return 'Выберите пункт';
-                break;
 
             case CommandHelper::MANAGE_REDIRECTS:
-                return ManageRedirectsAnswer::get($chatID);
-                break;
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminManageRedirectsAnswer::get($chatID);
+                } else {
+                    return ManageRedirectsAnswer::get($chatID);
+                }
 
             case CommandHelper::ADDING_MAPPING:
                 return 'Введите добавочный номер нового сотрудника';
-                break;
 
             case CommandHelper::DELETING_MAPPING:
                 return 'Введите добавочный номер';
-                break;
 
             case CommandHelper::EDITING_MAPPING:
                 return 'Введите добавочный номер';
-                break;
 
             case CommandHelper::ADDING_DIRECTIONS:
-                return 'Введите код страны и кол-во символов  (Например 380*********)';
-                break;
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminAddingDirectionsAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
+                }
 
             case CommandHelper::DELETING_DIRECTIONS:
                 return 'Введите код страны и кол-во символов';
-                break;
 
             case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
                 return ViewAllowedDirectionsAnswer::get($chatID);
-                break;
 
             case CommandHelper::ADDING_REDIRECT:
                 return AddingRedirectAnswer::get($chatID);
-                break;
 
             case CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER:
                 return AddingRedirectAnotherNumberAnswer::get($chatID);
-                break;
 
             case CommandHelper::NO:
                 return ManageRedirectsAnswer::get($chatID);
-                break;
 
             case CommandHelper::YES:
                 return CreateRedirectNumberAnswer::get($chatID, null, $type = 'yes');
-                break;
 
             case CommandHelper::BACK:
 
@@ -150,9 +121,14 @@ class Answer
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADMIN_MANAGE_REDIRECTS) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::NOT_ADMIN) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTIONS) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
-                break;
 
             default:
 
@@ -161,7 +137,6 @@ class Answer
                 }
 
                 return 'Команда не существует';
-                break;
         }
 
         return 'Команда не существует';

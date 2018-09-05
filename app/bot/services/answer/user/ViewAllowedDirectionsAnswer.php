@@ -1,6 +1,6 @@
 <?php
 
-namespace Pcs\Bot\services\answer;
+namespace Pcs\Bot\services\answer\user;
 
 use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\repositories\MappingRepository;
