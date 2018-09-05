@@ -13,6 +13,8 @@ class CommandHelper
     const USET = 'uset';
     const UNSET = 'unset';
     const BACK = 'Назад';
+    const YES = 'Да';
+    const NO = 'Нет';
 
     const USER_MANAGEMENT = 'Управление пользователями';
     const MANAGE_REDIRECTS = 'Управление переадресацией';

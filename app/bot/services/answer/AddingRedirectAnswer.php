@@ -3,6 +3,7 @@
 namespace Pcs\Bot\services\answer;
 
 use Pcs\Bot\helpers\SessionStatusHelper;
+use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\SessionRepository;
@@ -47,9 +48,9 @@ class AddingRedirectAnswer
                             $answer = $user->full_name . ', ваш мобильный номер ' . $user->phone . '. Установить на него переадресацию звонков?';
                             break;
                         }
-
-                        $answer = 'asdasd';
+                        $answer = $user->full_name . ', ваш мобильный номер ' . $user->phone . '. Переадресация на мобильные номера данного направления не разрешены.';
                     }
+
                 } else {
                     $answer = 'Направлений для переадресаций не найдено';
                 }

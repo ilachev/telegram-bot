@@ -7,10 +7,11 @@ use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\SessionRepository;
+use Pcs\Bot\repositories\UserRepository;
 
 class CreateRedirectNumberAnswer
 {
-    public static function get($chatID, $phone)
+    public static function get($chatID, $phone = null, $type = null)
     {
         $phoneIsAllowed = false;
 
@@ -18,6 +19,20 @@ class CreateRedirectNumberAnswer
         $mappingRepository = new MappingRepository();
         $redirectRepository = new RedirectRepository();
         $chatRepository = new ChatRepository();
+        $userRepository = new UserRepository();
+
+        if (!is_null($type)) {
+            $user = $userRepository->getUserByChatID($chatID);
+
+            if (!empty($user->phone)) {
+                if ($redirectRepository->setRedirect($user->id, $user->phone)) {
+                    $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS);
+                    return 'Номер успешно установлен для переадресации';
+                } else {
+                    return 'Не удалось установить номер для переадресации';
+                }
+            }
+        }
 
         $mappings = $mappingRepository->getMappings();
 

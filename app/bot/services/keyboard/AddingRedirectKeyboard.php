@@ -3,6 +3,7 @@
 namespace Pcs\Bot\services\keyboard;
 
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\UserRepository;
 
@@ -12,18 +13,55 @@ class AddingRedirectKeyboard
     {
         $redirectRepository = new RedirectRepository();
         $userRepository = new UserRepository();
+        $mappingRepository = new MappingRepository();
 
         $user = $userRepository->getUserByChatID($chatID);
-        $redirect = $redirectRepository->getRedirectForUser($user);
+        $redirect = $redirectRepository->getRedirectForUser($user->id);
 
-        $keyboard = [
-            [
-                ["text" => CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER]
-            ],
-            [
-                ["text" => CommandHelper::BACK]
-            ]
-        ];
+        if (!empty($redirect)) {
+            $keyboard = [
+                [
+                    ["text" => CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER],
+                ],
+                [
+                    ["text" => CommandHelper::BACK]
+                ]
+            ];
+        } else {
+            $mappings = $mappingRepository->getMappings();
+
+            $isAllowed = false;
+
+            foreach ($mappings as $mapping) {
+                $mappingLength = iconv_strlen($mapping['mapping']);
+                $phoneLength = iconv_strlen($user->phone);
+
+                $mappingKnownDigits = explode('*', $mapping['mapping']);
+
+                if ((stripos($user->phone, $mappingKnownDigits[0]) !== false) && $mappingLength == $phoneLength) {
+                    $isAllowed = true;
+                    break;
+                }
+            }
+
+            if ($isAllowed == false) {
+                $keyboard = [
+                    [
+                        ["text" => CommandHelper::BACK],
+                    ]
+                ];
+            } else {
+                $keyboard = [
+                    [
+                        ["text" => CommandHelper::YES],
+                        ["text" => CommandHelper::NO],
+                    ],
+                    [
+                        ["text" => CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER]
+                    ]
+                ];
+            }
+        }
 
         return $keyboard;
     }

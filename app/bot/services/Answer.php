@@ -13,6 +13,7 @@ use Pcs\Bot\repositories\UserRepository;
 use Pcs\Bot\services\answer\AddingRedirectAnotherNumberAnswer;
 use Pcs\Bot\services\answer\AddingRedirectAnswer;
 use Pcs\Bot\services\answer\CreateRedirectNumberAnswer;
+use Pcs\Bot\services\answer\ManageRedirectsAnswer;
 use Pcs\Bot\services\answer\ViewAllowedDirectionsAnswer;
 use TelegramBot\Api\Types\Message;
 
@@ -92,10 +93,7 @@ class Answer
                 break;
 
             case CommandHelper::MANAGE_REDIRECTS:
-
-                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
-
-                return 'Выберите пункт';
+                return ManageRedirectsAnswer::get($chatID);
                 break;
 
             case CommandHelper::ADDING_MAPPING:
@@ -119,18 +117,23 @@ class Answer
                 break;
 
             case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
-
                 return ViewAllowedDirectionsAnswer::get($chatID);
                 break;
 
             case CommandHelper::ADDING_REDIRECT:
-
                 return AddingRedirectAnswer::get($chatID);
                 break;
 
             case CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER:
-
                 return AddingRedirectAnotherNumberAnswer::get($chatID);
+                break;
+
+            case CommandHelper::NO:
+                return ManageRedirectsAnswer::get($chatID);
+                break;
+
+            case CommandHelper::YES:
+                return CreateRedirectNumberAnswer::get($chatID, null, $type = 'yes');
                 break;
 
             case CommandHelper::BACK:
@@ -144,7 +147,7 @@ class Answer
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_EXTENSION_REDIRECT) {
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
-                    $answer = AddingRedirectAnswer::get($chatID);
+                    $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
                     $answer = 'Выберите пункт';
                 }
