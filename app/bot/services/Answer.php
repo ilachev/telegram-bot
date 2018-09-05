@@ -3,7 +3,6 @@
 namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\SessionStatusHelper;
-use Pcs\Bot\Logger;
 use Pcs\Bot\helpers\CommandHelper;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\MappingRepository;
@@ -134,6 +133,8 @@ class Answer
 
                 if ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
                     return CreateRedirectNumberAnswer::get($chatID, $message->getText());
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTIONS) {
+
                 }
 
                 return 'Команда не существует';

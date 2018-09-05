@@ -13,6 +13,6 @@ class AdminAddingDirectionsAnswer
 
         $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_DIRECTIONS);
 
-        return 'Введите код страны и кол-во символов  (Например 380*********)';
+        return 'Введите название страны, код страны и кол-во символов  (Например "Украина 380*********")';
     }
 }
