@@ -29,8 +29,11 @@ class UserRepository
 
     public function getMappings()
     {
-        $extensions = Extension::with('user')->get();
+        return Extension::with('user')->get();
+    }
 
-        return $extensions;
+    public function getMappingByExtension($extension)
+    {
+        return Extension::with('user')->where('extension', '=', $extension)->first();
     }
 }

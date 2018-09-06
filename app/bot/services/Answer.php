@@ -12,7 +12,9 @@ use Pcs\Bot\repositories\UserRepository;
 use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateAddingDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateDeleteDirectionAnswer;
+use Pcs\Bot\services\answer\admin\AdminCreateDeleteMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminDeleteDirectionAnswer;
+use Pcs\Bot\services\answer\admin\AdminDeleteMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminManageRedirectsAnswer;
 use Pcs\Bot\services\answer\admin\AdminStartAnswer;
 use Pcs\Bot\services\answer\admin\AdminUserManagementAnswer;
@@ -92,7 +94,11 @@ class Answer
                 return 'Введите добавочный номер нового сотрудника';
 
             case CommandHelper::DELETING_MAPPING:
-                return 'Введите добавочный номер';
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminDeleteMappingAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
+                }
 
             case CommandHelper::EDITING_MAPPING:
                 return 'Введите добавочный номер';
@@ -127,6 +133,12 @@ class Answer
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_FIRST_STEP) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminDeleteMappingAnswer::get($chatID, 'notSession');
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
                 } else {
                     return ManageRedirectsAnswer::get($chatID);
                 }
@@ -135,6 +147,12 @@ class Answer
                 if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
                     if (in_array($chatID, $this->adminList)) {
                         return AdminCreateDeleteDirectionAnswer::get($chatID, $message->getText(), 'second');
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_FIRST_STEP) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminCreateDeleteMappingAnswer::get($chatID, $message->getText(), 'second');
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
@@ -174,6 +192,12 @@ class Answer
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::VIEW_MAPPING) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_FIRST_STEP) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_SECOND_STEP) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
 
@@ -187,6 +211,8 @@ class Answer
                     return AdminCreateAddingDirectionAnswer::get($chatID, $message->getText(), 'second');
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS) {
                     return AdminCreateDeleteDirectionAnswer::get($chatID, $message->getText(), 'first');
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING) {
+                    return AdminCreateDeleteMappingAnswer::get($chatID, $message->getText(), 'first');
                 }
 
                 return 'Команда не существует';
