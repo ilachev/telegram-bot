@@ -10,7 +10,9 @@ use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
 use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
+use Pcs\Bot\services\answer\admin\AdminAddingMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateAddingDirectionAnswer;
+use Pcs\Bot\services\answer\admin\AdminCreateAddingMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateDeleteDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateDeleteMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminDeleteDirectionAnswer;
@@ -91,7 +93,11 @@ class Answer
                 }
 
             case CommandHelper::ADDING_MAPPING:
-                return 'Введите добавочный номер нового сотрудника';
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminAddingMappingAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
+                }
 
             case CommandHelper::DELETING_MAPPING:
                 if (in_array($chatID, $this->adminList)) {
@@ -198,6 +204,12 @@ class Answer
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_SECOND_STEP) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_FIRST_STEP) {
+                    $answer = AdminAddingMappingAnswer::get($chatID, 'notSession');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
+                    $answer = AdminCreateAddingMappingAnswer::get($chatID, null,'first');
                 }
                 return $answer;
 
@@ -213,6 +225,10 @@ class Answer
                     return AdminCreateDeleteDirectionAnswer::get($chatID, $message->getText(), 'first');
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING) {
                     return AdminCreateDeleteMappingAnswer::get($chatID, $message->getText(), 'first');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING) {
+                    return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'first');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_FIRST_STEP) {
+                    return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'second');
                 }
 
                 return 'Команда не существует';

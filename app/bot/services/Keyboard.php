@@ -7,7 +7,6 @@ use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\SessionRepository;
-use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
 use Pcs\Bot\services\keyboard\admin\AdminAddingDirectionsKeyboard;
 use Pcs\Bot\services\keyboard\admin\AdminManageRedirectsKeyboard;
 use Pcs\Bot\services\keyboard\admin\AdminStartKeyboard;
@@ -17,6 +16,7 @@ use Pcs\Bot\services\keyboard\NotAdminKeyboard;
 use Pcs\Bot\services\keyboard\user\AddingRedirectKeyboard;
 use Pcs\Bot\services\keyboard\user\ManageRedirectsKeyboard;
 use Pcs\Bot\services\keyboard\user\StartKeyboard;
+use Pcs\Bot\services\keyboard\YesNoKeyboard;
 use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -76,6 +76,13 @@ class Keyboard
                 }
 
             case CommandHelper::VIEW_MAPPING:
+                if (in_array($chatID, $this->adminList)) {
+                    return BackKeyboard::get();
+                } else {
+                    return NotAdminKeyboard::get();
+                }
+
+            case CommandHelper::ADDING_MAPPING:
                 if (in_array($chatID, $this->adminList)) {
                     return BackKeyboard::get();
                 } else {
@@ -219,6 +226,16 @@ class Keyboard
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
                     return AdminStartKeyboard::get($chatID);
 
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::USER_MANAGEMENT);
+                    return AdminUserManagementKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_FIRST_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING);
+                    return BackKeyboard::get();
+
                 }
 
                 return new ReplyKeyboardMarkup(
@@ -230,32 +247,13 @@ class Keyboard
             default:
 
                 if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
-
-                    $keyboard = [
-                        [
-                            ["text" => CommandHelper::YES],
-                            ["text" => CommandHelper::NO],
-                        ]
-                    ];
-
-                    return new ReplyKeyboardMarkup(
-                        $keyboard,
-                        true,
-                        true
-                    );
+                    return YesNoKeyboard::get();
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_FIRST_STEP) {
-                    $keyboard = [
-                        [
-                            ["text" => CommandHelper::YES],
-                            ["text" => CommandHelper::NO],
-                        ]
-                    ];
-
-                    return new ReplyKeyboardMarkup(
-                        $keyboard,
-                        true,
-                        true
-                    );
+                    return YesNoKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_FIRST_STEP) {
+                    return BackKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
+                    return BackKeyboard::get();
                 } else {
                     return null;
                 }

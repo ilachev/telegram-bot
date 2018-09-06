@@ -40,4 +40,7 @@ class SessionStatusHelper
 
     const DELETING_MAPPING_FIRST_STEP = 23;
     const DELETING_MAPPING_SECOND_STEP = 24;
+
+    const ADDING_MAPPING_FIRST_STEP = 25;
+    const ADDING_MAPPING_SECOND_STEP = 26;
 }
