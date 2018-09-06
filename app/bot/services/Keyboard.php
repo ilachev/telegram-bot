@@ -38,6 +38,7 @@ class Keyboard
         }
 
         $chatID = $message->getChat()->getId();
+        $currentStatus = $this->sessionRepository->getStatus($chatID);
 
         switch ($command) {
             case CommandHelper::START:
@@ -84,7 +85,22 @@ class Keyboard
 
             case CommandHelper::ADDING_DIRECTIONS:
                 if (in_array($chatID, $this->adminList)) {
-                    return AdminAddingDirectionsKeyboard::get($chatID);
+                    return AdminAddingDirectionsKeyboard::get();
+                } else {
+                    return NotAdminKeyboard::get();
+                }
+
+            case CommandHelper::DELETING_DIRECTIONS:
+                if (in_array($chatID, $this->adminList)) {
+                    return new ReplyKeyboardMarkup(
+                        [
+                            [
+                                ["text" => CommandHelper::BACK]
+                            ]
+                        ],
+                        true,
+                        true
+                    );
                 } else {
                     return NotAdminKeyboard::get();
                 }
@@ -117,9 +133,24 @@ class Keyboard
                 );
 
             case CommandHelper::NO:
+                if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::DELETING_DIRECTIONS);
 
-                $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
-                return ManageRedirectsKeyboard::get($chatID);
+                    $keyboard = [
+                        [
+                            ["text" => CommandHelper::BACK]
+                        ]
+                    ];
+
+                    return new ReplyKeyboardMarkup(
+                        $keyboard,
+                        true,
+                        true
+                    );
+                } else {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                    return ManageRedirectsKeyboard::get($chatID);
+                }
 
             case CommandHelper::YES:
                 $keyboard = [
@@ -137,8 +168,6 @@ class Keyboard
             case CommandHelper::BACK:
 
                 $keyboard = [];
-
-                $currentStatus = $this->sessionRepository->getStatus($chatID);
 
                 if ($currentStatus == SessionStatusHelper::MANAGE_REDIRECTS) {
 
@@ -182,6 +211,29 @@ class Keyboard
 
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
                     return AdminManageRedirectsKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTION_FIRST_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_DIRECTIONS);
+                    $keyboard = [
+                        [
+                            ["text" => CommandHelper::BACK]
+                        ]
+                    ];
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTION_SECOND_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
+                    return AdminManageRedirectsKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_SECOND_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
                 }
 
                 return new ReplyKeyboardMarkup(
@@ -191,7 +243,24 @@ class Keyboard
                 );
 
             default:
-                return null;
+
+                if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
+
+                    $keyboard = [
+                        [
+                            ["text" => CommandHelper::YES],
+                            ["text" => CommandHelper::NO],
+                        ]
+                    ];
+
+                    return new ReplyKeyboardMarkup(
+                        $keyboard,
+                        true,
+                        true
+                    );
+                } else {
+                    return null;
+                }
         }
     }
 }

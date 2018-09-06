@@ -39,4 +39,39 @@ class SessionRepository
 
         return $session->status;
     }
+
+    public function saveTempString($chatID, $tempString)
+    {
+        $session = $this->getSessionByID($chatID);
+
+        if (!empty($session)) {
+            $session->temp_string = $tempString;
+            if ($session->save()) {
+                return true;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public function getTempString($chatID)
+    {
+        $session = $this->getSessionByID($chatID);
+
+        if (!empty($session)) {
+            return $session->temp_string;
+        } else {
+            return null;
+        }
+    }
+
+    public function clearTempString($chatID)
+    {
+        $session = $this->getSessionByID($chatID);
+
+        $session->temp_string = '';
+        $session->save();
+    }
 }

@@ -10,6 +10,9 @@ use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
 use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
+use Pcs\Bot\services\answer\admin\AdminCreateAddingDirectionAnswer;
+use Pcs\Bot\services\answer\admin\AdminCreateDeleteDirectionAnswer;
+use Pcs\Bot\services\answer\admin\AdminDeleteDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminManageRedirectsAnswer;
 use Pcs\Bot\services\answer\admin\AdminStartAnswer;
 use Pcs\Bot\services\answer\NotAdminAnswer;
@@ -89,7 +92,11 @@ class Answer
                 }
 
             case CommandHelper::DELETING_DIRECTIONS:
-                return 'Введите код страны и кол-во символов';
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminDeleteDirectionAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
+                }
 
             case CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS:
                 return ViewAllowedDirectionsAnswer::get($chatID);
@@ -101,10 +108,26 @@ class Answer
                 return AddingRedirectAnotherNumberAnswer::get($chatID);
 
             case CommandHelper::NO:
-                return ManageRedirectsAnswer::get($chatID);
+                if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminDeleteDirectionAnswer::get($chatID, 'notSession');
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                } else {
+                    return ManageRedirectsAnswer::get($chatID);
+                }
 
             case CommandHelper::YES:
-                return CreateRedirectNumberAnswer::get($chatID, null, $type = 'yes');
+                if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminCreateDeleteDirectionAnswer::get($chatID, $message->getText(), 'second');
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                } else {
+                    return CreateRedirectNumberAnswer::get($chatID, null, $type = 'yes');
+                }
 
             case CommandHelper::BACK:
 
@@ -126,6 +149,14 @@ class Answer
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTIONS) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTION_FIRST_STEP) {
+                    $answer = AdminAddingDirectionsAnswer::get($chatID, 'notSession');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTION_SECOND_STEP) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_SECOND_STEP) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
 
@@ -134,7 +165,11 @@ class Answer
                 if ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
                     return CreateRedirectNumberAnswer::get($chatID, $message->getText());
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTIONS) {
-
+                    return AdminCreateAddingDirectionAnswer::get($chatID, $message->getText(), 'first');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_DIRECTION_FIRST_STEP) {
+                    return AdminCreateAddingDirectionAnswer::get($chatID, $message->getText(), 'second');
+                } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS) {
+                    return AdminCreateDeleteDirectionAnswer::get($chatID, $message->getText(), 'first');
                 }
 
                 return 'Команда не существует';
