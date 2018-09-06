@@ -11,6 +11,7 @@ use Pcs\Bot\services\answer\admin\AdminAddingDirectionsAnswer;
 use Pcs\Bot\services\keyboard\admin\AdminAddingDirectionsKeyboard;
 use Pcs\Bot\services\keyboard\admin\AdminManageRedirectsKeyboard;
 use Pcs\Bot\services\keyboard\admin\AdminStartKeyboard;
+use Pcs\Bot\services\keyboard\admin\AdminUserManagementKeyboard;
 use Pcs\Bot\services\keyboard\NotAdminKeyboard;
 use Pcs\Bot\services\keyboard\user\AddingRedirectKeyboard;
 use Pcs\Bot\services\keyboard\user\ManageRedirectsKeyboard;
@@ -60,27 +61,32 @@ class Keyboard
                 );
 
             case CommandHelper::USER_MANAGEMENT:
-                $keyboard = new ReplyKeyboardMarkup(
-                    [
-                        [
-                            ['text' => CommandHelper::VIEW_MAPPING],
-                            ['text' => CommandHelper::ADDING_MAPPING],
-                        ],
-                        [
-                            ['text' => CommandHelper::EDITING_MAPPING],
-                            ['text' => CommandHelper::DELETING_MAPPING],
-                        ]
-                    ],
-                    true,
-                    true
-                );
-                return $keyboard;
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminUserManagementKeyboard::get($chatID);
+                } else {
+                    return NotAdminKeyboard::get();
+                }
 
             case CommandHelper::MANAGE_REDIRECTS:
                 if (in_array($chatID, $this->adminList)) {
                     return AdminManageRedirectsKeyboard::get($chatID);
                 } else {
                     return ManageRedirectsKeyboard::get($chatID);
+                }
+
+            case CommandHelper::VIEW_MAPPING:
+                if (in_array($chatID, $this->adminList)) {
+                    return new ReplyKeyboardMarkup(
+                        [
+                            [
+                                ["text" => CommandHelper::BACK]
+                            ]
+                        ],
+                        true,
+                        true
+                    );
+                } else {
+                    return NotAdminKeyboard::get();
                 }
 
             case CommandHelper::ADDING_DIRECTIONS:
@@ -234,6 +240,17 @@ class Keyboard
 
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
                     return AdminStartKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::USER_MANAGEMENT) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::VIEW_MAPPING) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::USER_MANAGEMENT);
+                    return AdminUserManagementKeyboard::get($chatID);
+
                 }
 
                 return new ReplyKeyboardMarkup(

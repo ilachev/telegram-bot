@@ -15,6 +15,8 @@ use Pcs\Bot\services\answer\admin\AdminCreateDeleteDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminDeleteDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminManageRedirectsAnswer;
 use Pcs\Bot\services\answer\admin\AdminStartAnswer;
+use Pcs\Bot\services\answer\admin\AdminUserManagementAnswer;
+use Pcs\Bot\services\answer\admin\AdminViewMappingAnswer;
 use Pcs\Bot\services\answer\NotAdminAnswer;
 use Pcs\Bot\services\answer\user\AddingRedirectAnotherNumberAnswer;
 use Pcs\Bot\services\answer\user\AddingRedirectAnswer;
@@ -66,13 +68,24 @@ class Answer
                 return SubscribeAnswer::get($message);
 
             case CommandHelper::USER_MANAGEMENT:
-                return 'Выберите пункт';
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminUserManagementAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
+                }
 
             case CommandHelper::MANAGE_REDIRECTS:
                 if (in_array($chatID, $this->adminList)) {
                     return AdminManageRedirectsAnswer::get($chatID);
                 } else {
                     return ManageRedirectsAnswer::get($chatID);
+                }
+
+            case CommandHelper::VIEW_MAPPING:
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminViewMappingAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
                 }
 
             case CommandHelper::ADDING_MAPPING:
@@ -156,6 +169,10 @@ class Answer
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS) {
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_SECOND_STEP) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::USER_MANAGEMENT) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::VIEW_MAPPING) {
                     $answer = 'Выберите пункт';
                 }
                 return $answer;

@@ -32,4 +32,9 @@ class User extends Model
     {
         return $this->hasOne(Redirect::class);
     }
+
+    public function extension()
+    {
+        return $this->hasOne(Extension::class);
+    }
 }
