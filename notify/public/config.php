@@ -8,6 +8,11 @@ defined('DB_PASS') or define('DB_PASS', 'xJbTh0Sq0G');
 
 defined('API_KEY') or define('API_KEY', '651882769:AAHPoFaQTkbPUtTMTArHc4ZgyxpmJvTJtrM');
 
+/**
+ * настройка сокета в формате socks5://110:ef2tlgrproxy@5.189.129.242:31080
+ */
+defined('PROXY_STRING') or define('PROXY_STRING', '');
+
 $GLOBALS['admins'] = [
     '505904694'
 ];

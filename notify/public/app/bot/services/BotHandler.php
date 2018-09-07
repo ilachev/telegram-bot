@@ -14,31 +14,6 @@ use TelegramBot\Api\Types\Update;
 
 class BotHandler
 {
-    private $commandsList = [
-        CommandHelper::ADMIN,
-        CommandHelper::LIST,
-        CommandHelper::ULIST,
-        CommandHelper::USET,
-        CommandHelper::UNSET,
-    ];
-
-    private $allowedRawCommands = [
-        CommandHelper::BACK,
-        CommandHelper::SUBSCRIBE,
-        CommandHelper::UNSUBSCRIBE,
-        CommandHelper::USER_MANAGEMENT,
-        CommandHelper::ADDING_MAPPING,
-        CommandHelper::DELETING_MAPPING,
-        CommandHelper::EDITING_MAPPING,
-        CommandHelper::VIEW_MAPPING,
-        CommandHelper::MANAGE_REDIRECTS,
-        CommandHelper::ADDING_DIRECTIONS,
-        CommandHelper::DELETING_DIRECTIONS,
-        CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS,
-        CommandHelper::ADDING_REDIRECT,
-        CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER,
-    ];
-
     private $sessionRepository;
 
     public function __construct()
@@ -51,10 +26,17 @@ class BotHandler
         try {
             $bot = new Client(API_KEY);
 
+            /**
+             * @var BotApi $bot
+             */
+
+            if (!empty(PROXY_STRING)) {
+                $bot->setProxy(PROXY_STRING);
+            }
+
             $bot->command(CommandHelper::START, function ($message) use ($bot) {
                 /**
                  * @var Message $message
-                 * @var BotApi $bot
                  */
 
                 $answer = new Answer();
@@ -72,14 +54,7 @@ class BotHandler
                 );
             });
 
-
-            $allowedRawCommands = $this->allowedRawCommands;
-
-            $bot->on(function(Update $update) use ($bot, $allowedRawCommands) {
-                /**
-                 * @var Message $message
-                 * @var BotApi $bot
-                 */
+            $bot->on(function(Update $update) use ($bot) {
 
                 $answer = new Answer();
                 $keyboard = new Keyboard();
@@ -97,9 +72,7 @@ class BotHandler
                 );
 
             }, function(Update $update) use ($bot) {
-                /**
-                 * @var BotApi $bot
-                 */
+
                 $message = $update->getMessage();
                 $chatID = $message->getChat()->getId();
 
@@ -128,7 +101,7 @@ class BotHandler
             $bot->run();
 
         } catch (Exception $e) {
-            Logger::log('Exc', $e->getMessage());
+            Logger::log('Except', $e->getMessage());
         }
 
     }
