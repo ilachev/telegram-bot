@@ -13,6 +13,8 @@ class AdminAddingMappingAnswer
 
         if (is_null($session)) {
             $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING);
+        } else {
+            $sessionRepository->clearTempString($chatID);
         }
         return 'Введите добавочный номер нового сотрудника';
 

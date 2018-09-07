@@ -18,9 +18,6 @@ nbproject
 # windows thumbnail cache
 Thumbs.db
 
-# composer itself is not needed
-composer.phar
-
 # Mac DS_Store Files
 .DS_Store
 
@@ -29,4 +26,8 @@ phpunit.phar
 # local phpunit config
 /phpunit.xml
 
+# composer itself is not needed
+vendor
 composer.lock
+composer.phar
+db_ef_voip_cdr.sql

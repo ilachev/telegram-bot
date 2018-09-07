@@ -36,4 +36,17 @@ class UserRepository
     {
         return Extension::with('user')->where('extension', '=', $extension)->first();
     }
+
+    public function saveUserWithExtension($extension, $phone, $fullName)
+    {
+        $user = new User();
+        $user->phone = $phone;
+        $user->full_name = $fullName;
+        $user->save();
+
+        $newExtension = new Extension();
+        $newExtension->extension = $extension;
+
+        $user->extension()->save($newExtension);
+    }
 }

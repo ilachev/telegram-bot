@@ -1,6 +1,14 @@
 {
     "name": "igor-vetrov-dev-team/efsol-telegram",
     "description": "Telegram Bot for Efsol Voip",
+    "authors": [
+        {
+            "name": "Igor Vetrov's Web Studio",
+            "email": "info@igorvetrov.ru",
+            "homepage": "https://igorvetrov.ru/",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": ">=7.2",
         "ext-PDO": "*",

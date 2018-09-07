@@ -43,4 +43,5 @@ class SessionStatusHelper
 
     const ADDING_MAPPING_FIRST_STEP = 25;
     const ADDING_MAPPING_SECOND_STEP = 26;
+    const ADDING_MAPPING_THIRD_STEP = 27;
 }

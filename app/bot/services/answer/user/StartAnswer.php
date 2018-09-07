@@ -15,6 +15,7 @@ class StartAnswer
 
         $chat = $chatRepository->getChatByChatID($chatID);
         $sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+        $sessionRepository->clearTempString($chatID);
 
         if (!empty($chat->chat_id)) {
             $answer = 'Выберите пункт';

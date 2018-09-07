@@ -236,6 +236,16 @@ class Keyboard
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING);
                     return BackKeyboard::get();
 
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_FIRST_STEP);
+                    return BackKeyboard::get();
+
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_THIRD_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+
                 }
 
                 return new ReplyKeyboardMarkup(
@@ -253,6 +263,8 @@ class Keyboard
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_FIRST_STEP) {
                     return BackKeyboard::get();
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
+                    return BackKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_THIRD_STEP) {
                     return BackKeyboard::get();
                 } else {
                     return null;

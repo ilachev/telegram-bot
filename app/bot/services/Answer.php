@@ -210,6 +210,8 @@ class Answer
                     $answer = AdminAddingMappingAnswer::get($chatID, 'notSession');
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
                     $answer = AdminCreateAddingMappingAnswer::get($chatID, null,'first');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_THIRD_STEP) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
 
@@ -229,6 +231,8 @@ class Answer
                     return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'first');
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_FIRST_STEP) {
                     return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'second');
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
+                    return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'third');
                 }
 
                 return 'Команда не существует';

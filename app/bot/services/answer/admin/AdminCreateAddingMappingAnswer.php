@@ -24,9 +24,11 @@ class AdminCreateAddingMappingAnswer
             } else {
                 if (is_null($message)) {
                     $string = $sessionRepository->getTempString($chatID);
-                    Logger::log('sdad', json_decode($string));
+                    $data = json_decode($string);
+                    $sessionRepository->saveTempString($chatID, $data[0]);
+                } else {
+                    $sessionRepository->saveTempString($chatID, $message);
                 }
-                $sessionRepository->saveTempString($chatID, $message);
                 $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_FIRST_STEP);
                 return 'Введите номер мобильного телефона';
             }
@@ -40,9 +42,18 @@ class AdminCreateAddingMappingAnswer
                 ];
                 $string = json_encode($data);
                 $sessionRepository->saveTempString($chatID, $string);
-                $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_FIRST_STEP);
+                $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_SECOND_STEP);
                 return 'Введите ФИО сотрудника';
             }
+        } elseif ($step == 'third') {
+            $string = $sessionRepository->getTempString($chatID);
+            $data = json_decode($string);
+
+            $userRepository->saveUserWithExtension($data[0], $data[1], $message);
+            $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_THIRD_STEP);
+            $sessionRepository->clearTempString($chatID);
+
+            return 'Сопоставление успешно задано';
         }
         return 'Не предвиденная ошибка';
     }
