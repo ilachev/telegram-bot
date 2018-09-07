@@ -18,9 +18,16 @@ class AdminCreateAddingMappingAnswer
 
         if ($step == 'first') {
             $extension = $extensionRepository->getExtensionByExtension($message);
+            $mapping = $userRepository->getMappingByExtension($message);
 
-            if (!empty($extension)) {
-                return '123';
+            if (!empty($mapping->user->extension->extension)) {
+
+                $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE);
+
+                return 'Добавочный ' . $mapping->user->extension->extension . ' закреплён за сотрудником ' . $mapping->user->full_name . ' c номером ' . $mapping->user->phone . PHP_EOL .
+                    'Для нового сопоставления необходимо удалить уже существующее сопоставление.' . PHP_EOL .
+                    'Удалить?';
+
             } else {
                 if (is_null($message)) {
                     $string = $sessionRepository->getTempString($chatID);

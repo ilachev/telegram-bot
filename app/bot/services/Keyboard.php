@@ -126,13 +126,24 @@ class Keyboard
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_FIRST_STEP) {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::DELETING_MAPPING);
                     return AdminUserManagementKeyboard::get($chatID);
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
                 } else {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
                     return ManageRedirectsKeyboard::get($chatID);
                 }
 
             case CommandHelper::YES:
-                return BackKeyboard::get();
+                if ($currentStatus == SessionStatusHelper::DELETING_MAPPING) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return BackKeyboard::get();
+                    } else {
+                        return NotAdminKeyboard::get();
+                    }
+                } else {
+                    return BackKeyboard::get();
+                }
 
             case CommandHelper::BACK:
 
@@ -266,6 +277,8 @@ class Keyboard
                     return BackKeyboard::get();
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_THIRD_STEP) {
                     return BackKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
+                    return YesNoKeyboard::get();
                 } else {
                     return null;
                 }

@@ -145,6 +145,12 @@ class Answer
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return 'Выберите пункт';
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
                 } else {
                     return ManageRedirectsAnswer::get($chatID);
                 }
@@ -159,6 +165,12 @@ class Answer
                 } elseif ($currentStatus == SessionStatusHelper::DELETING_MAPPING_FIRST_STEP) {
                     if (in_array($chatID, $this->adminList)) {
                         return AdminCreateDeleteMappingAnswer::get($chatID, $message->getText(), 'second');
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminDeleteMappingAnswer::get($chatID);
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
