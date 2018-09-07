@@ -13,11 +13,9 @@ class AdminCreateAddingMappingAnswer
     public static function get($chatID, $message, $step)
     {
         $sessionRepository = new SessionRepository();
-        $extensionRepository = new ExtensionRepository();
         $userRepository = new UserRepository();
 
         if ($step == 'first') {
-            $extension = $extensionRepository->getExtensionByExtension($message);
             $mapping = $userRepository->getMappingByExtension($message);
 
             if (!empty($mapping->user->extension->extension)) {

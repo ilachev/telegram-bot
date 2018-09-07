@@ -49,4 +49,14 @@ class UserRepository
 
         $user->extension()->save($newExtension);
     }
+
+    public function editUserWithExtension($extension, $phone, $fullName)
+    {
+        $mapping = Extension::with('user')->where('extension', '=', $extension)->first();
+
+        $mapping->user()->update([
+            'phone' => $phone,
+            'full_name' => $fullName,
+        ]);
+    }
 }

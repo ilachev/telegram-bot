@@ -96,6 +96,13 @@ class Keyboard
                     return NotAdminKeyboard::get();
                 }
 
+            case CommandHelper::EDITING_MAPPING:
+                if (in_array($chatID, $this->adminList)) {
+                    return BackKeyboard::get();
+                } else {
+                    return NotAdminKeyboard::get();
+                }
+
             case CommandHelper::ADDING_DIRECTIONS:
                 if (in_array($chatID, $this->adminList)) {
                     return AdminAddingDirectionsKeyboard::get();
@@ -129,6 +136,12 @@ class Keyboard
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
                     return AdminStartKeyboard::get($chatID);
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
                 } else {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
                     return ManageRedirectsKeyboard::get($chatID);
@@ -136,6 +149,18 @@ class Keyboard
 
             case CommandHelper::YES:
                 if ($currentStatus == SessionStatusHelper::DELETING_MAPPING) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return BackKeyboard::get();
+                    } else {
+                        return NotAdminKeyboard::get();
+                    }
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return BackKeyboard::get();
+                    } else {
+                        return NotAdminKeyboard::get();
+                    }
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
                     if (in_array($chatID, $this->adminList)) {
                         return BackKeyboard::get();
                     } else {
@@ -257,6 +282,31 @@ class Keyboard
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
                     return AdminStartKeyboard::get($chatID);
 
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::USER_MANAGEMENT);
+                    return AdminUserManagementKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::USER_MANAGEMENT);
+                    return AdminUserManagementKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_SECOND_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::EDITING_MAPPING);
+                    return BackKeyboard::get();
+
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_THIRD_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::EDITING_MAPPING_SECOND_STEP);
+                    return BackKeyboard::get();
+
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FOURTH_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+
                 }
 
                 return new ReplyKeyboardMarkup(
@@ -279,6 +329,12 @@ class Keyboard
                     return BackKeyboard::get();
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
                     return YesNoKeyboard::get();
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
+                    return YesNoKeyboard::get();
+                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
+                    return YesNoKeyboard::get();
+                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_THIRD_STEP) {
+                    return BackKeyboard::get();
                 } else {
                     return null;
                 }

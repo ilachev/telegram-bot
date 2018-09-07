@@ -15,8 +15,10 @@ use Pcs\Bot\services\answer\admin\AdminCreateAddingDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateAddingMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateDeleteDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminCreateDeleteMappingAnswer;
+use Pcs\Bot\services\answer\admin\AdminCreateEditingMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminDeleteDirectionAnswer;
 use Pcs\Bot\services\answer\admin\AdminDeleteMappingAnswer;
+use Pcs\Bot\services\answer\admin\AdminEditingMappingAnswer;
 use Pcs\Bot\services\answer\admin\AdminManageRedirectsAnswer;
 use Pcs\Bot\services\answer\admin\AdminStartAnswer;
 use Pcs\Bot\services\answer\admin\AdminUserManagementAnswer;
@@ -107,7 +109,11 @@ class Answer
                 }
 
             case CommandHelper::EDITING_MAPPING:
-                return 'Введите добавочный номер';
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminEditingMappingAnswer::get($chatID);
+                } else {
+                    return NotAdminAnswer::get($chatID);
+                }
 
             case CommandHelper::ADDING_DIRECTIONS:
                 if (in_array($chatID, $this->adminList)) {
@@ -151,6 +157,18 @@ class Answer
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
+                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return 'Выберите пункт';
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return 'Выберите пункт';
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
                 } else {
                     return ManageRedirectsAnswer::get($chatID);
                 }
@@ -171,6 +189,18 @@ class Answer
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_ALREADY_HAVE) {
                     if (in_array($chatID, $this->adminList)) {
                         return AdminDeleteMappingAnswer::get($chatID);
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminAddingMappingAnswer::get($chatID);
+                    } else {
+                        return NotAdminAnswer::get($chatID);
+                    }
+                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
+                    if (in_array($chatID, $this->adminList)) {
+                        return AdminCreateEditingMappingAnswer::get($chatID, null, 'second');
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
@@ -224,6 +254,12 @@ class Answer
                     $answer = AdminCreateAddingMappingAnswer::get($chatID, null,'first');
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_THIRD_STEP) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_SECOND_STEP) {
+                    $answer = AdminEditingMappingAnswer::get($chatID, 'notSession');
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_THIRD_STEP) {
+                    $answer = AdminCreateEditingMappingAnswer::get($chatID, 'back','second');
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FOURTH_STEP) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
 
@@ -245,6 +281,12 @@ class Answer
                     return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'second');
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_MAPPING_SECOND_STEP) {
                     return AdminCreateAddingMappingAnswer::get($chatID, $message->getText(), 'third');
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING) {
+                    return AdminCreateEditingMappingAnswer::get($chatID, $message->getText(), 'first');
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_SECOND_STEP) {
+                    return AdminCreateEditingMappingAnswer::get($chatID, $message->getText(), 'third');
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_THIRD_STEP) {
+                    return AdminCreateEditingMappingAnswer::get($chatID, $message->getText(), 'fourth');
                 }
 
                 return 'Команда не существует';

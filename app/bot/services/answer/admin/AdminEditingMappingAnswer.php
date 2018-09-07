@@ -7,11 +7,15 @@ use Pcs\Bot\repositories\SessionRepository;
 
 class AdminEditingMappingAnswer
 {
-    public static function get($chatID)
+    public static function get($chatID, $session = null)
     {
         $sessionRepository = new SessionRepository();
 
-        $sessionRepository->setStatus($chatID, SessionStatusHelper::EDITING_MAPPING);
+        if (is_null($session)) {
+            $sessionRepository->setStatus($chatID, SessionStatusHelper::EDITING_MAPPING);
+        } else {
+            $sessionRepository->clearTempString($chatID);
+        }
 
         return 'Введите добавочный номер';
     }
