@@ -29,4 +29,11 @@ class ChatRepository
 
         return $chat->user_id;
     }
+
+    public function getChatIDByUserID($userID)
+    {
+        $chat = Chat::all()->where('user_id', '=', $userID)->first();
+
+        return $chat->chat_id;
+    }
 }
