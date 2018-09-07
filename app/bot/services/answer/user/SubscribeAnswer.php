@@ -2,7 +2,10 @@
 
 namespace Pcs\Bot\services\answer\user;
 
+use Pcs\Bot\helpers\SessionStatusHelper;
+use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\ChatRepository;
+use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
 use TelegramBot\Api\Types\Message;
 
@@ -12,21 +15,24 @@ class SubscribeAnswer
     {
         $userRepository = new UserRepository();
         $chatRepository = new ChatRepository();
+        $sessionRepository = new SessionRepository();
 
         $phoneNumber = $message->getContact()->getPhoneNumber();
+        $chatID = $message->getChat()->getId();
 
         if (!empty($phoneNumber) && stripos($phoneNumber, '+') !== false) {
             $phoneNumber = str_replace('+', '', $phoneNumber);
         }
 
-        $user = $userRepository->getUserByPhone($phoneNumber);
+        $extension = $userRepository->getUserPhoneByPhone($phoneNumber);
 
-        if (!empty($user->extension)) {
+        if (!empty($extension['extension']->extension)) {
 
             $chatRepository->saveChatID(
-                $message->getChat()->getId(),
-                $user->id
+                $chatID,
+                $extension['user']->id
             );
+            $sessionRepository->setStatus($chatID, SessionStatusHelper::SUBSCRIBE);
 
             $answer = "Вы успешно подписались на оповещения о пропущенных звонках на номер {$user->extension}". PHP_EOL .
                 "Если это не ваш номер - обратитесь на Хотлайн";

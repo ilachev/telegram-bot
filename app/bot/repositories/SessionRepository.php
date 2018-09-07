@@ -37,7 +37,10 @@ class SessionRepository
     {
         $session = $this->getSessionByID($sessionID);
 
-        return $session->status;
+        if (!empty($session)) {
+            return $session->status;
+        }
+        return null;
     }
 
     public function saveTempString($chatID, $tempString)

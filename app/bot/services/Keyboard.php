@@ -51,15 +51,14 @@ class Keyboard
                 }
 
             case CommandHelper::SUBSCRIBE:
-                return new ReplyKeyboardMarkup(
-                    [
-                        [
-                            ["text" => CommandHelper::MANAGE_REDIRECTS]
-                        ]
-                    ],
-                    true,
-                    true
-                );
+                if (empty($this->sessionRepository->getStatus($chatID))) {
+                    return null;
+                }
+                if (in_array($chatID, $this->adminList)) {
+                    return AdminStartKeyboard::get($chatID);
+                } else {
+                    return StartKeyboard::get($chatID);
+                }
 
             case CommandHelper::USER_MANAGEMENT:
                 if (in_array($chatID, $this->adminList)) {

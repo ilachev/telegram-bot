@@ -8,11 +8,18 @@ use Pcs\Bot\Models\User;
 
 class UserRepository
 {
-    public function getUserByPhone($phone)
+    public function getUserPhoneByPhone($phone)
     {
         $user = User::all()->where('phone', '=', $phone)->first();
 
-        return $user;
+        if (!empty($user)) {
+            $extension = Extension::all()->where('user_id', '=', $user->id)->first();
+            return [
+                'user' => $user,
+                'extension' => $extension,
+            ];
+        }
+        return null;
     }
 
     public function getUserByChatID($chatID)

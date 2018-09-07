@@ -4,6 +4,7 @@ namespace Pcs\Bot\services;
 
 use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;

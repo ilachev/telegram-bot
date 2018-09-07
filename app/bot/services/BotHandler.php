@@ -51,13 +51,6 @@ class BotHandler
         try {
             $bot = new Client(API_KEY);
 
-            $admins = [
-                '30893259', //m.konchevich
-                '177952832', //dshleg
-                '612025923', //Galenko
-                '505904694', //Galenko
-            ];
-
             $bot->command(CommandHelper::START, function ($message) use ($bot) {
                 /**
                  * @var Message $message
@@ -107,7 +100,6 @@ class BotHandler
                 /**
                  * @var BotApi $bot
                  */
-
                 $message = $update->getMessage();
                 $chatID = $message->getChat()->getId();
 

@@ -14,16 +14,15 @@ class StartAnswer
         $sessionRepository = new SessionRepository();
 
         $chat = $chatRepository->getChatByChatID($chatID);
-        $sessionRepository->setStatus($chatID, SessionStatusHelper::START);
-        $sessionRepository->clearTempString($chatID);
 
         if (!empty($chat->chat_id)) {
+            $sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+            $sessionRepository->clearTempString($chatID);
             $answer = 'Выберите пункт';
         } else {
             $answer = "Добро пожаловать, {$username} ". PHP_EOL .
                 "Данный бот предназначен для оповещения о пропущенных звонках по Вашему добавочному номеру." . PHP_EOL .
-                "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту." . PHP_EOL .
-                "Вы можете отписаться от уведомлений нажав кнопку - <b>Отписаться</b>". PHP_EOL;
+                "Для включения оповещений нажмите кнопку <b>Подписаться</b> и согласитесь с передачей Вашего мобильного номера боту.";
         }
 
         return $answer;
