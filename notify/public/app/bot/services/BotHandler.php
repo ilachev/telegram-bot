@@ -61,15 +61,41 @@ class BotHandler
 
                 $message = $update->getMessage();
                 $chatID = $message->getChat()->getId();
+                $messageText = $message->getText();
 
-                $bot->sendMessage(
-                    $chatID,
-                    $answer->getAnswer($message),
-                    'html',
-                    false,
-                    null,
-                    $keyboard->getKeyboard($message)
-                );
+                if ($messageText == CommandHelper::VIEW_MAPPING) {
+                    $ans = $answer->getAnswer($message);
+                    if (is_array($ans)) {
+                        foreach ($ans as $an) {
+                            $bot->sendMessage(
+                                $chatID,
+                                $an,
+                                'html',
+                                false,
+                                null,
+                                $keyboard->getKeyboard($message)
+                            );
+                        }
+                    } else {
+                        $bot->sendMessage(
+                            $chatID,
+                            $ans,
+                            'html',
+                            false,
+                            null,
+                            $keyboard->getKeyboard($message)
+                        );
+                    }
+                } else {
+                    $bot->sendMessage(
+                        $chatID,
+                        $answer->getAnswer($message),
+                        'html',
+                        false,
+                        null,
+                        $keyboard->getKeyboard($message)
+                    );
+                }
 
             }, function(Update $update) use ($bot) {
 

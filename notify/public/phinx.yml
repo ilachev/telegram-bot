@@ -1,6 +1,6 @@
 paths:
-    migrations: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/db/migrations'
-    seeds: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/db/seeds'
+    migrations: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/notify/public/db/migrations'
+    seeds: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/notify/public/db/seeds'
 
 environments:
     default_migration_table: phinxlog
