@@ -33,7 +33,6 @@ class BotHandler
             if (!empty(PROXY_STRING)) {
                 $bot->setProxy(PROXY_STRING);
             }
-            var_dump($notify);
 
             if ($notify === true) {
 
