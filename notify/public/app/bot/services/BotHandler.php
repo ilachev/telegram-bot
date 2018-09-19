@@ -21,7 +21,7 @@ class BotHandler
         $this->sessionRepository = new SessionRepository();
     }
 
-    public function on()
+    public function on($notify = false, $chat = false, $answer = false)
     {
         try {
             $bot = new Client(API_KEY);
@@ -33,43 +33,66 @@ class BotHandler
             if (!empty(PROXY_STRING)) {
                 $bot->setProxy(PROXY_STRING);
             }
+            var_dump($notify);
 
-            $bot->command(CommandHelper::START, function ($message) use ($bot) {
-                /**
-                 * @var Message $message
-                 */
-
-                $answer = new Answer();
-                $keyboard = new Keyboard();
-
-                $chatID = $message->getChat()->getId();
+            if ($notify === true) {
 
                 $bot->sendMessage(
-                    $chatID,
-                    $answer->getAnswer($message, CommandHelper::START),
+                    $chat,
+                    $answer,
                     'html',
                     false,
                     null,
-                    $keyboard->getKeyboard($message, CommandHelper::START)
+                    null
                 );
-            });
 
-            $bot->on(function(Update $update) use ($bot) {
+            } else {
+                $bot->command(CommandHelper::START, function ($message) use ($bot) {
+                    /**
+                     * @var Message $message
+                     */
 
-                $answer = new Answer();
-                $keyboard = new Keyboard();
+                    $answer = new Answer();
+                    $keyboard = new Keyboard();
 
-                $message = $update->getMessage();
-                $chatID = $message->getChat()->getId();
-                $messageText = $message->getText();
+                    $chatID = $message->getChat()->getId();
 
-                if ($messageText == CommandHelper::VIEW_MAPPING) {
-                    $ans = $answer->getAnswer($message);
-                    if (is_array($ans)) {
-                        foreach ($ans as $an) {
+                    $bot->sendMessage(
+                        $chatID,
+                        $answer->getAnswer($message, CommandHelper::START),
+                        'html',
+                        false,
+                        null,
+                        $keyboard->getKeyboard($message, CommandHelper::START)
+                    );
+                });
+
+                $bot->on(function(Update $update) use ($bot) {
+
+                    $answer = new Answer();
+                    $keyboard = new Keyboard();
+
+                    $message = $update->getMessage();
+                    $chatID = $message->getChat()->getId();
+                    $messageText = $message->getText();
+
+                    if ($messageText == CommandHelper::VIEW_MAPPING) {
+                        $ans = $answer->getAnswer($message);
+                        if (is_array($ans)) {
+                            foreach ($ans as $an) {
+                                $bot->sendMessage(
+                                    $chatID,
+                                    $an,
+                                    'html',
+                                    false,
+                                    null,
+                                    $keyboard->getKeyboard($message)
+                                );
+                            }
+                        } else {
                             $bot->sendMessage(
                                 $chatID,
-                                $an,
+                                $ans,
                                 'html',
                                 false,
                                 null,
@@ -79,50 +102,41 @@ class BotHandler
                     } else {
                         $bot->sendMessage(
                             $chatID,
-                            $ans,
+                            $answer->getAnswer($message),
                             'html',
                             false,
                             null,
                             $keyboard->getKeyboard($message)
                         );
                     }
-                } else {
-                    $bot->sendMessage(
-                        $chatID,
-                        $answer->getAnswer($message),
-                        'html',
-                        false,
-                        null,
-                        $keyboard->getKeyboard($message)
-                    );
-                }
 
-            }, function(Update $update) use ($bot) {
+                }, function(Update $update) use ($bot) {
 
-                $message = $update->getMessage();
-                $chatID = $message->getChat()->getId();
+                    $message = $update->getMessage();
+                    $chatID = $message->getChat()->getId();
 
-                if ($this->sessionRepository->getStatus($chatID) > 0) {
+                    if ($this->sessionRepository->getStatus($chatID) > 0) {
+                        return true;
+                    }
+
+                    if (!empty($message->getContact()->getPhoneNumber())) {
+
+                        $answer = new Answer();
+                        $keyboard = new Keyboard();
+
+                        $bot->sendMessage(
+                            $chatID,
+                            $answer->getAnswer($message, CommandHelper::SUBSCRIBE),
+                            'html',
+                            false,
+                            null,
+                            $keyboard->getKeyboard($message, CommandHelper::SUBSCRIBE)
+                        );
+                        return false;
+                    }
                     return true;
-                }
-
-                if (!empty($message->getContact()->getPhoneNumber())) {
-
-                    $answer = new Answer();
-                    $keyboard = new Keyboard();
-
-                    $bot->sendMessage(
-                        $chatID,
-                        $answer->getAnswer($message, CommandHelper::SUBSCRIBE),
-                        'html',
-                        false,
-                        null,
-                        $keyboard->getKeyboard($message, CommandHelper::SUBSCRIBE)
-                    );
-                    return false;
-                }
-                return true;
-            });
+                });
+            }
 
             $bot->run();
 
