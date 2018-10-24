@@ -3,7 +3,6 @@
 namespace Pcs\Bot\services\answer\admin;
 
 use Pcs\Bot\helpers\SessionStatusHelper;
-use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\ExtensionRepository;
 use Pcs\Bot\repositories\SessionRepository;
 use Pcs\Bot\repositories\UserRepository;
@@ -25,8 +24,6 @@ class AdminViewMappingAnswer
             $mappings = $userRepository->getMappings();
 
             $answer = 'Список сопоставлений' . PHP_EOL . PHP_EOL;
-
-            Logger::log('asd', count($mappings));
 
             $tempKey = 0;
             $data[$tempKey] = $answer;

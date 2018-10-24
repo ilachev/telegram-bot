@@ -14,5 +14,8 @@ defined('API_KEY') or define('API_KEY', '651882769:AAHPoFaQTkbPUtTMTArHc4ZgyxpmJ
 defined('PROXY_STRING') or define('PROXY_STRING', '');
 
 $GLOBALS['admins'] = [
-    '505904694'
+    '30893259', //m.konchevich
+    '177952832', //dshleg
+    '505904694', //dshleg
+    '612025923' //Galenko
 ];

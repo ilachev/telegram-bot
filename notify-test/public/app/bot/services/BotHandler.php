@@ -30,6 +30,8 @@ class BotHandler
              * @var BotApi $bot
              */
 
+//            Logger::log('test', $variable);
+
             if (!empty(PROXY_STRING)) {
                 $bot->setProxy(PROXY_STRING);
             }
@@ -42,7 +44,8 @@ class BotHandler
                     'html',
                     false,
                     null,
-                    null
+                    null,
+                    false
                 );
 
             } else {
@@ -140,8 +143,7 @@ class BotHandler
             $bot->run();
 
         } catch (Exception $e) {
-            Logger::log('Except', $e->getMessage());
+            Logger::log('Exception', null, $e->getMessage());
         }
-
     }
 }

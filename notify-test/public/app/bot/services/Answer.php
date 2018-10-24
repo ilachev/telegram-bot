@@ -261,6 +261,8 @@ class Answer
                     $answer = AdminCreateEditingMappingAnswer::get($chatID, 'back','second');
                 } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FOURTH_STEP) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
 

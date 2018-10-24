@@ -13,20 +13,20 @@ use Pcs\Bot\Logger;
  * @var \TelegramBot\Api\BotApi $bot
  */
 
-
 new Database();
-
 
 if (count($argv) == 3 && is_numeric($argv[1]) && is_numeric($argv[2])) {
     $userRepository = new UserRepository();
     $chatRepository = new ChatRepository();
 
     $userExtension = $userRepository->getMappingByExtension($argv[1]);
-    $chatID = $chatRepository->getChatIDByUserID($userExtension->user->id);
-    $extension = $userExtension->user->extension->extension;
+    if (!empty($userExtension)) {
+        $chatID = $chatRepository->getChatIDByUserID($userExtension->user->id);
+        $extension = $userExtension->user->extension->extension;
 
-    $answer = "<b>$extension </b> Пропущенный вызов c номера $argv[2]";
+        $answer = "<b>$extension </b> Пропущенный вызов c номера $argv[2]";
 
-    $bot = new BotHandler();
-    $bot->on(true, $chatID, $answer);
+        $bot = new BotHandler();
+        $bot->on(true, $chatID, $answer);
+    }
 }
