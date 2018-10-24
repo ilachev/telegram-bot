@@ -30,8 +30,6 @@ class BotHandler
              * @var BotApi $bot
              */
 
-//            Logger::log('test', $variable);
-
             if (!empty(PROXY_STRING)) {
                 $bot->setProxy(PROXY_STRING);
             }
