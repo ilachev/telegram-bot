@@ -2,6 +2,7 @@
 
 namespace Pcs\Bot\services\answer\user;
 
+use Pcs\Asterisk\AsteriskService;
 use Pcs\Bot\helpers\SessionStatusHelper;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\MappingRepository;
@@ -21,13 +22,19 @@ class CreateRedirectNumberAnswer
         $chatRepository = new ChatRepository();
         $userRepository = new UserRepository();
 
+        $asteriskService = new AsteriskService();
+
         if (!is_null($type)) {
             $user = $userRepository->getUserByChatID($chatID);
 
             if (!empty($user->phone)) {
-                if ($redirectRepository->setRedirect($user->id, $user->phone)) {
-                    $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS);
-                    return 'Номер успешно установлен для переадресации';
+                if ($asteriskService->updateRedirect($user->extension->extension, $user->phone)) {
+                    if ($redirectRepository->setRedirect($user->id, $user->phone)) {
+                        $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS);
+                        return 'Номер успешно установлен для переадресации';
+                    } else {
+                        return 'Не удалось установить номер для переадресации';
+                    }
                 } else {
                     return 'Не удалось установить номер для переадресации';
                 }
@@ -50,13 +57,17 @@ class CreateRedirectNumberAnswer
             }
 
             if ($phoneIsAllowed == true) {
-
+                $user = $userRepository->getUserByChatID($chatID);
                 $userID = $chatRepository->getUserIDByChatID($chatID);
-                $redirect = $redirectRepository->updateRedirect($userID, $phone);
 
-                if ($redirect == true) {
-                    $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS);
-                    return 'Номер успешно установлен для переадресации';
+                if ($asteriskService->updateRedirect($user->extension->extension, $phone)) {
+                    $redirect = $redirectRepository->updateRedirect($userID, $phone);
+
+                    if ($redirect == true) {
+                        $asteriskService->updateRedirect($user->extension->extension, $phone);
+                        $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS);
+                        return 'Номер успешно установлен для переадресации';
+                    }
                 }
 
                 return 'Номер для переадресации уже такой';
