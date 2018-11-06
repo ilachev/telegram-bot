@@ -24,7 +24,10 @@ if (count($argv) == 3 && is_numeric($argv[1]) && is_numeric($argv[2])) {
         $chatID = $chatRepository->getChatIDByUserID($userExtension->user->id);
         $extension = $userExtension->user->extension->extension;
 
-        $answer = "<b>$extension </b> Пропущенный вызов c номера $argv[2]";
+        $mapping = $userRepository->getMappingByExtension($argv[2]);
+        $fio = $mapping->user->full_name;
+
+        $answer = "У Вас пропущенный вызов c доб. $argv[2] от " . $fio;
 
         $bot = new BotHandler();
         $bot->on(true, $chatID, $answer);
