@@ -51,6 +51,9 @@ class AddingRedirectKeyboard
             if ($isAllowed == false) {
                 $keyboard = [
                     [
+                        ["text" => CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER],
+                    ],
+                    [
                         ["text" => CommandHelper::BACK],
                     ],
                     [

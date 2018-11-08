@@ -34,7 +34,12 @@ if (count($argv) == 3 && is_numeric($argv[1]) && is_numeric($argv[2])) {
                 $answer = "У Вас пропущенный вызов c доб. $argv[2]";
             }
         } elseif (strlen($argv[2]) > 4) {
-            $client = \Pcs\Bot\Models\CorpClient::where('client_number', '=', $argv[2])->first();
+
+            $client = false;
+
+            if (strlen($argv[2]) >= 10) {
+                $client = \Pcs\Bot\Models\CorpClient::where('client_number', 'like', '%' . substr($argv[2], -10))->first();
+            }
 
             if ($client) {
                 $clientName = $client->client_name;

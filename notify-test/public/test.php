@@ -40,9 +40,14 @@ require_once 'config.php';
 
 $database = new \Pcs\Bot\Models\Database();
 
-//$test = \Pcs\Bot\Models\CorpClient::where('client_number', '=', '791650280')->first();
-//$usr = \Pcs\Bot\Models\User::where('id', '=', 1)->first();
+$argv[2] = 2;
 
-$chat = \Pcs\Bot\Models\Chat::where('chat_id', '=', '505904694')->first();
-$ext = \Pcs\Bot\Models\Extension::where('user_id', '=', $chat->user_id)->first();
-var_dump($ext->extension);
+$client = false;
+
+if (strlen($argv[2]) >= 10) {
+    $client = \Pcs\Bot\Models\CorpClient::where('client_number', 'like', '%' . substr($argv[2], -10))->first();
+}
+
+//$test = \Pcs\Bot\Models\CorpClient::where('client_number', 'like', '%' . substr('2', -10))->first();
+
+var_dump($client->client_name);
