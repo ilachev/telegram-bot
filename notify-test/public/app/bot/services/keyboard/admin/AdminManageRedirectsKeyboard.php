@@ -15,6 +15,10 @@ class AdminManageRedirectsKeyboard
                 ['text' => CommandHelper::DELETING_DIRECTIONS],
             ],
             [
+                ['text' => CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS],
+                ['text' => CommandHelper::ADDING_REDIRECT],
+            ],
+            [
                 ['text' => CommandHelper::BACK]
             ],
             [

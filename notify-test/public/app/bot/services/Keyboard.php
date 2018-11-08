@@ -187,13 +187,23 @@ class Keyboard
                     ];
                 } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
 
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
-                    return ManageRedirectsKeyboard::get($chatID);
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
+                        return AdminManageRedirectsKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                        return ManageRedirectsKeyboard::get($chatID);
+                    }
 
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_EXTENSION_REDIRECT) {
 
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
-                    return ManageRedirectsKeyboard::get($chatID);
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
+                        return AdminManageRedirectsKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                        return ManageRedirectsKeyboard::get($chatID);
+                    }
 
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
 
