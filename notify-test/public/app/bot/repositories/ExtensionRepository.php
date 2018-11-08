@@ -3,6 +3,7 @@
 namespace Pcs\Bot\repositories;
 
 use Pcs\Bot\Models\Extension;
+use Pcs\Bot\Models\User;
 
 class ExtensionRepository
 {
@@ -14,8 +15,11 @@ class ExtensionRepository
     public function deleteExtension($extension)
     {
         $delExtension = Extension::all()->where('extension', '=', $extension)->first();
+        $user = User::all()->where('id', '=', $delExtension->user_id)->first();
 
         if ($delExtension->delete()) {
+            $user->delete();
+
             return true;
         } else {
             return null;

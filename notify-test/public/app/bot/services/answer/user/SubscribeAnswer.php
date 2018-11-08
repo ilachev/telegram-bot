@@ -26,6 +26,10 @@ class SubscribeAnswer
 
         $extension = $userRepository->getUserPhoneByPhone($phoneNumber);
 
+        file_put_contents('/var/www/voip.efsol.ru/asterisk/notify-test/public/logs/test.log', print_r($extension['extension'], true) . "\r\n", FILE_APPEND);
+        file_put_contents('/var/www/voip.efsol.ru/asterisk/notify-test/public/logs/test.log', print_r($extension, true) . "\r\n", FILE_APPEND);
+
+
         if (!empty($extension['extension']->extension)) {
 
             $chatRepository->saveChatID(

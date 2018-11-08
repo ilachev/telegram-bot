@@ -66,4 +66,9 @@ class UserRepository
             'full_name' => $fullName,
         ]);
     }
+
+    public function getUserByPhone($phone)
+    {
+        return User::where('phone', '=', $phone)->first();
+    }
 }

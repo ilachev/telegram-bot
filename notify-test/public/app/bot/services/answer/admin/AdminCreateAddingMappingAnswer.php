@@ -41,6 +41,13 @@ class AdminCreateAddingMappingAnswer
             $extension = $sessionRepository->getTempString($chatID);
 
             if (!empty($extension)) {
+
+                $phone = $userRepository->getUserByPhone($message);
+                if ($phone) {
+                    $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_MAPPING_FIRST_STEP);
+                    return 'Пользователь с таким номером телефона уже существует';
+                }
+
                 $data = [
                     $extension,
                     $message
