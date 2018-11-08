@@ -6,6 +6,12 @@ defined('DB_NAME') or define('DB_NAME', 'telegrambot');
 defined('DB_USER') or define('DB_USER', 'telegrambot');
 defined('DB_PASS') or define('DB_PASS', 'FhgkIyyTe50');
 
+defined('CORP_DB_DRIVER') or define('CORP_DB_DRIVER', 'mysql');
+defined('CORP_DB_HOST') or define('CORP_DB_HOST', 'localhost');
+defined('CORP_DB_NAME') or define('CORP_DB_NAME', 'db_client_corp');
+defined('CORP_DB_USER') or define('CORP_DB_USER', 'telegrambot');
+defined('CORP_DB_PASS') or define('CORP_DB_PASS', 'FhgkIyyTe50');
+
 defined('API_KEY') or define('API_KEY', '609369656:AAFbfjj1XD6oelKgl8ppYVxOdBUNMOsRED8');
 
 defined('AMI_HOST') or define('AMI_HOST', '127.0.0.1');

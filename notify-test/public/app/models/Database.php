@@ -9,6 +9,7 @@ class Database
     public function __construct()
     {
         $capsule = new Capsule();
+
         $capsule->addConnection(
             [
                 'driver' => DB_DRIVER,
@@ -19,7 +20,22 @@ class Database
                 'charset' => 'utf8',
                 'collation' => 'utf8_general_ci',
                 'prefix' => '',
-            ]
+            ],
+            'default'
+        );
+
+        $capsule->addConnection(
+            [
+                'driver' => CORP_DB_DRIVER,
+                'host' => CORP_DB_HOST,
+                'database' => CORP_DB_NAME,
+                'username' => CORP_DB_USER,
+                'password' => CORP_DB_PASS,
+                'charset' => 'utf8',
+                'collation' => 'utf8_general_ci',
+                'prefix' => '',
+            ],
+            'corpclients'
         );
 
         $capsule->bootEloquent();

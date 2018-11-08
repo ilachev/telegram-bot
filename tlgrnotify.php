@@ -24,10 +24,30 @@ if (count($argv) == 3 && is_numeric($argv[1]) && is_numeric($argv[2])) {
         $chatID = $chatRepository->getChatIDByUserID($userExtension->user->id);
         $extension = $userExtension->user->extension->extension;
 
-        $mapping = $userRepository->getMappingByExtension($argv[2]);
-        $fio = $mapping->user->full_name;
+        if (strlen($argv[2]) <= 4) {
+            $mapping = $userRepository->getMappingByExtension($argv[2]);
+            $fio = $mapping->user->full_name;
 
-        $answer = "У Вас пропущенный вызов c доб. $argv[2] от " . $fio;
+            if ($fio) {
+                $answer = "У Вас пропущенный вызов c доб. $argv[2] от " . $fio;
+            } else {
+                $answer = "У Вас пропущенный вызов c доб. $argv[2]";
+            }
+        } elseif (strlen($argv[2]) > 4) {
+            $client = \Pcs\Bot\Models\CorpClient::where('client_number', '=', $argv[2])->first();
+
+            if ($client) {
+                $clientName = $client->client_name;
+
+                if (strlen($clientName) > 0) {
+                    $answer = "У Вас пропущенный вызов c номера $argv[2] от контрагента '" . $clientName . "'";
+                } else {
+                    $answer = "У Вас пропущенный вызов c номера $argv[2]. Контрагент не определён";
+                }
+            } else {
+                $answer = "У Вас пропущенный вызов c номера $argv[2]. Контрагент не определён";
+            }
+        }
 
         $bot = new BotHandler();
         $bot->on(true, $chatID, $answer);

@@ -38,9 +38,11 @@ require_once 'config.php';
 //    var_dump($eventResponse->getRawContent());
 //}
 
-//$database = new \Pcs\Bot\Models\Database();
-//
-//$repository = new \Pcs\Bot\repositories\UserRepository();
-//
-//$user = $repository->getUserByChatID('505904694');
-//var_dump($user->redirect->redirect);
+$database = new \Pcs\Bot\Models\Database();
+
+//$test = \Pcs\Bot\Models\CorpClient::where('client_number', '=', '791650280')->first();
+//$usr = \Pcs\Bot\Models\User::where('id', '=', 1)->first();
+
+$chat = \Pcs\Bot\Models\Chat::where('chat_id', '=', '505904694')->first();
+$ext = \Pcs\Bot\Models\Extension::where('user_id', '=', $chat->user_id)->first();
+var_dump($ext->extension);
