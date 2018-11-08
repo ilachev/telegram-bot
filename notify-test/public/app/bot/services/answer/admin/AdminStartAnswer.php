@@ -15,9 +15,10 @@ class AdminStartAnswer
 
         $chat = $chatRepository->getChatByChatID($chatID);
 
+        $sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+        $sessionRepository->clearTempString($chatID);
+
         if (!empty($chat->chat_id)) {
-            $sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
-            $sessionRepository->clearTempString($chatID);
             $answer = 'Выберите пункт';
         } else {
             $answer = "Добро пожаловать, {$username} ". PHP_EOL .

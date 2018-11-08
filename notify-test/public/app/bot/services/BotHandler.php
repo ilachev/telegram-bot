@@ -119,7 +119,7 @@ class BotHandler
                         return true;
                     }
 
-                    if (!empty($message->getContact()->getPhoneNumber())) {
+                    if (!empty($message->getContact()) && !empty($message->getContact()->getPhoneNumber())) {
 
                         $answer = new Answer();
                         $keyboard = new Keyboard();
