@@ -34,7 +34,7 @@ class SubscribeAnswer
             );
             $sessionRepository->setStatus($chatID, SessionStatusHelper::SUBSCRIBE);
 
-            $answer = "Вы успешно подписались на оповещения о пропущенных звонках на номер {$user->extension}". PHP_EOL .
+            $answer = "Вы успешно подписались на оповещения о пропущенных звонках на номер {$extension['extension']->extension}". PHP_EOL .
                 "Если это не ваш номер - обратитесь на Хотлайн";
         } else {
             $answer = "Данный номер мобильного телефона не занесен в базу данных сотрудников. Обратитесь на Хотлайн.";

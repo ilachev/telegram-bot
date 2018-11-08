@@ -11,6 +11,7 @@ class SessionStatusHelper
     const ADMIN_START = 3;
 
     const SUBSCRIBE = 4;
+    const UNSUBSCRIBE = 34;
 
     const USER_MANAGEMENT = 5;
 

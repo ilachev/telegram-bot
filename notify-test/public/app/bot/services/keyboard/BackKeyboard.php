@@ -9,9 +9,12 @@ class BackKeyboard
 {
     public static function get()
     {
-        $keyboard = $keyboard = [
+        $keyboard = [
             [
                 ["text" => CommandHelper::BACK]
+            ],
+            [
+                ["text" => CommandHelper::UNSUBSCRIBE]
             ]
         ];
 

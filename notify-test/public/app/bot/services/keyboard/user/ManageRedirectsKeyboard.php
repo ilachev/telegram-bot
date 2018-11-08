@@ -16,6 +16,9 @@ class ManageRedirectsKeyboard
             ],
             [
                 ['text' => CommandHelper::BACK]
+            ],
+            [
+                ["text" => CommandHelper::UNSUBSCRIBE]
             ]
         ];
 

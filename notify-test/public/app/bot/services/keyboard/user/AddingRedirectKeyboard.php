@@ -26,6 +26,9 @@ class AddingRedirectKeyboard
                 ],
                 [
                     ["text" => CommandHelper::BACK]
+                ],
+                [
+                    ["text" => CommandHelper::UNSUBSCRIBE]
                 ]
             ];
         } else {
@@ -49,6 +52,9 @@ class AddingRedirectKeyboard
                 $keyboard = [
                     [
                         ["text" => CommandHelper::BACK],
+                    ],
+                    [
+                        ["text" => CommandHelper::UNSUBSCRIBE]
                     ]
                 ];
             } else {
@@ -59,6 +65,9 @@ class AddingRedirectKeyboard
                     ],
                     [
                         ["text" => CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER]
+                    ],
+                    [
+                        ["text" => CommandHelper::UNSUBSCRIBE]
                     ]
                 ];
             }

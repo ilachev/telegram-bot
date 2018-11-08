@@ -180,6 +180,9 @@ class Keyboard
                     $keyboard = [
                         [
                             ["text" => CommandHelper::MANAGE_REDIRECTS]
+                        ],
+                        [
+                            ["text" => CommandHelper::UNSUBSCRIBE]
                         ]
                     ];
                 } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
@@ -313,6 +316,9 @@ class Keyboard
                     true,
                     true
                 );
+
+            case CommandHelper::UNSUBSCRIBE;
+                return StartKeyboard::get($chatID);
 
             default:
 

@@ -13,6 +13,9 @@ class YesNoKeyboard
             [
                 ["text" => CommandHelper::YES],
                 ["text" => CommandHelper::NO],
+            ],
+            [
+                ["text" => CommandHelper::UNSUBSCRIBE]
             ]
         ];
 

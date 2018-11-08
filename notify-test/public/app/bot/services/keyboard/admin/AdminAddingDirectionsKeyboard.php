@@ -13,6 +13,9 @@ class AdminAddingDirectionsKeyboard
             [
                 [
                     ["text" => CommandHelper::BACK]
+                ],
+                [
+                    ["text" => CommandHelper::UNSUBSCRIBE]
                 ]
             ],
             true,

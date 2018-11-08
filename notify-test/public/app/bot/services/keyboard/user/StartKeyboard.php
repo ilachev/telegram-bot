@@ -16,18 +16,23 @@ class StartKeyboard
 
         if (!empty($chat->chat_id)) {
             $keyboard = [
-                ["text" => CommandHelper::MANAGE_REDIRECTS]
+                [
+                    ["text" => CommandHelper::MANAGE_REDIRECTS]
+                ],
+                [
+                    ["text" => CommandHelper::UNSUBSCRIBE]
+                ]
             ];
         } else {
             $keyboard = [
-                ["text" => CommandHelper::SUBSCRIBE, 'request_contact' => true]
+                [
+                    ["text" => CommandHelper::SUBSCRIBE, 'request_contact' => true]
+                ]
             ];
         }
 
         return new ReplyKeyboardMarkup(
-            [
-                $keyboard
-            ],
+            $keyboard,
             true,
             true
         );

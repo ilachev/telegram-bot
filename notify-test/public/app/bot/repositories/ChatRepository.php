@@ -36,4 +36,14 @@ class ChatRepository
 
         return $chat->chat_id;
     }
+
+    public function deleteChat($chatID)
+    {
+        $chat = $this->getChatByChatID($chatID);
+        if ($chat) {
+            $chat->delete();
+            return true;
+        }
+        return null;
+    }
 }

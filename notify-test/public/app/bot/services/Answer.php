@@ -25,6 +25,7 @@ use Pcs\Bot\services\answer\admin\AdminStartAnswer;
 use Pcs\Bot\services\answer\admin\AdminUserManagementAnswer;
 use Pcs\Bot\services\answer\admin\AdminViewMappingAnswer;
 use Pcs\Bot\services\answer\NotAdminAnswer;
+use Pcs\Bot\services\answer\UnsubscribeAnswer;
 use Pcs\Bot\services\answer\user\AddingRedirectAnotherNumberAnswer;
 use Pcs\Bot\services\answer\user\AddingRedirectAnswer;
 use Pcs\Bot\services\answer\user\CreateRedirectNumberAnswer;
@@ -266,6 +267,9 @@ class Answer
                 }
                 return $answer;
 
+            case CommandHelper::UNSUBSCRIBE;
+                return UnsubscribeAnswer::get($chatID);
+
             default:
 
                 if ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
@@ -294,7 +298,5 @@ class Answer
 
                 return 'Команда не существует';
         }
-
-        return 'Команда не существует';
     }
 }
