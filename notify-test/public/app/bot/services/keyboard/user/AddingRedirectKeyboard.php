@@ -26,9 +26,6 @@ class AddingRedirectKeyboard
                 ],
                 [
                     ["text" => CommandHelper::BACK]
-                ],
-                [
-                    ["text" => CommandHelper::UNSUBSCRIBE]
                 ]
             ];
         } else {

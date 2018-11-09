@@ -69,59 +69,72 @@ class BotHandler
 
                 $bot->on(function(Update $update) use ($bot) {
 
-                    $answer = new Answer();
-                    $keyboard = new Keyboard();
+                    if (!is_null($update)) {
 
-                    $message = $update->getMessage();
-                    $chatID = $message->getChat()->getId();
-                    $messageText = $message->getText();
+                        $answer = new Answer();
+                        $keyboard = new Keyboard();
 
-                    if ($messageText == CommandHelper::VIEW_MAPPING) {
-                        $ans = $answer->getAnswer($message);
-                        if (is_array($ans)) {
-                            foreach ($ans as $an) {
-                                $bot->sendMessage(
-                                    $chatID,
-                                    $an,
-                                    'html',
-                                    false,
-                                    null,
-                                    $keyboard->getKeyboard($message)
-                                );
+                        $message = $update->getMessage();
+
+                        if (!is_null($message)) {
+
+                            if (!is_null($message->getChat())) {
+
+                                $chatID = $message->getChat()->getId();
+                                $messageText = $message->getText();
+
+                                if ($messageText == CommandHelper::VIEW_MAPPING) {
+                                    $ans = $answer->getAnswer($message);
+                                    if (is_array($ans)) {
+                                        foreach ($ans as $an) {
+                                            $bot->sendMessage(
+                                                $chatID,
+                                                $an,
+                                                'html',
+                                                false,
+                                                null,
+                                                $keyboard->getKeyboard($message)
+                                            );
+                                        }
+                                    } else {
+                                        $bot->sendMessage(
+                                            $chatID,
+                                            $ans,
+                                            'html',
+                                            false,
+                                            null,
+                                            $keyboard->getKeyboard($message)
+                                        );
+                                    }
+                                } else {
+                                    $bot->sendMessage(
+                                        $chatID,
+                                        $answer->getAnswer($message),
+                                        'html',
+                                        false,
+                                        null,
+                                        $keyboard->getKeyboard($message)
+                                    );
+                                }
                             }
-                        } else {
-                            $bot->sendMessage(
-                                $chatID,
-                                $ans,
-                                'html',
-                                false,
-                                null,
-                                $keyboard->getKeyboard($message)
-                            );
                         }
-                    } else {
-                        $bot->sendMessage(
-                            $chatID,
-                            $answer->getAnswer($message),
-                            'html',
-                            false,
-                            null,
-                            $keyboard->getKeyboard($message)
-                        );
                     }
 
                 }, function(Update $update) use ($bot) {
+                    if (is_null($update)) {
+                        return true;
+                    }
 
                     $message = $update->getMessage();
+
+                    if (is_null($message)) {
+                        return true;
+                    }
 
                     if (is_null($message->getChat())) {
                         return true;
                     } else {
                         $chatID = $message->getChat()->getId();
-                    }
-
-                    if ($this->sessionRepository->getStatus($chatID) > 0) {
-                        return true;
                     }
 
                     if (is_null($message->getContact())) {

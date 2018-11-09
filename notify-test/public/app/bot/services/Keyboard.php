@@ -208,12 +208,17 @@ class Keyboard
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER) {
 
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_EXTENSION_REDIRECT);
-                    $keyboard = AddingRedirectKeyboard::get($chatID);
+                    return AddingRedirectKeyboard::get($chatID);
 
                 } elseif ($currentStatus == SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER_SUCCESS) {
 
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
-                    return ManageRedirectsKeyboard::get($chatID);
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
+                        return AdminManageRedirectsKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                        return ManageRedirectsKeyboard::get($chatID);
+                    }
 
                 } elseif ($currentStatus == SessionStatusHelper::ADMIN_MANAGE_REDIRECTS) {
 
