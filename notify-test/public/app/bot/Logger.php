@@ -12,7 +12,7 @@ class Logger
     {
         if (is_writable(__DIR__ . '/../../logs/app.log')) {
             // Create some handlers
-            $stream = new StreamHandler(__DIR__. '/../../logs/app.log', Log::ERROR);
+            $stream = new StreamHandler(__DIR__. '/../../logs/app.log', Log::DEBUG);
             $firephp = new FirePHPHandler();
 
             // Create the main logger of the app

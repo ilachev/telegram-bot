@@ -17,6 +17,11 @@ class SubscribeAnswer
         $chatRepository = new ChatRepository();
         $sessionRepository = new SessionRepository();
 
+        if (is_null($message->getContact()) || is_null($message->getChat())) {
+            return 'Непредвиденная ошибка, обратитесь к администратору';
+        }
+
+        $phoneNumber = $message->getContact()->getPhoneNumber();
         $chatID = $message->getChat()->getId();
 
         if (!empty($phoneNumber) && stripos($phoneNumber, '+') !== false) {

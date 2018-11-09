@@ -113,28 +113,37 @@ class BotHandler
                 }, function(Update $update) use ($bot) {
 
                     $message = $update->getMessage();
-                    $chatID = $message->getChat()->getId();
+
+                    if (is_null($message->getChat())) {
+                        return true;
+                    } else {
+                        $chatID = $message->getChat()->getId();
+                    }
 
                     if ($this->sessionRepository->getStatus($chatID) > 0) {
                         return true;
                     }
 
-                    if (!empty($message->getContact()) && !empty($message->getContact()->getPhoneNumber())) {
+                    if (is_null($message->getContact())) {
+                        return true;
+                    } else {
+                        if (is_null($message->getContact()->getPhoneNumber())) {
+                            return true;
+                        } else {
+                            $answer = new Answer();
+                            $keyboard = new Keyboard();
 
-                        $answer = new Answer();
-                        $keyboard = new Keyboard();
-
-                        $bot->sendMessage(
-                            $chatID,
-                            $answer->getAnswer($message, CommandHelper::SUBSCRIBE),
-                            'html',
-                            false,
-                            null,
-                            $keyboard->getKeyboard($message, CommandHelper::SUBSCRIBE)
-                        );
-                        return false;
+                            $bot->sendMessage(
+                                $chatID,
+                                $answer->getAnswer($message, CommandHelper::SUBSCRIBE),
+                                'html',
+                                false,
+                                null,
+                                $keyboard->getKeyboard($message, CommandHelper::SUBSCRIBE)
+                            );
+                            return false;
+                        }
                     }
-                    return true;
                 });
             }
 
