@@ -12,9 +12,6 @@ class BackKeyboard
         $keyboard = [
             [
                 ["text" => CommandHelper::BACK]
-            ],
-            [
-                ["text" => CommandHelper::UNSUBSCRIBE]
             ]
         ];
 

@@ -13,9 +13,6 @@ class NotAdminKeyboard
             [
                 [
                     ["text" => CommandHelper::BACK]
-                ],
-                [
-                    ["text" => CommandHelper::UNSUBSCRIBE]
                 ]
             ],
             true,

@@ -21,9 +21,6 @@ class AdminUserManagementKeyboard
                 ],
                 [
                     ['text' => CommandHelper::BACK],
-                ],
-                [
-                    ["text" => CommandHelper::UNSUBSCRIBE]
                 ]
             ],
             true,
