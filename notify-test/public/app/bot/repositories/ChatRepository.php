@@ -6,6 +6,12 @@ use Pcs\Bot\Models\Chat;
 
 class ChatRepository
 {
+
+    public function getAllChatID()
+    {
+        return Chat::all()->toArray();
+    }
+
     public function saveChatID($chatID, $userID)
     {
         $chat = Chat::all()->where('chat_id', '=', $chatID)->first();
