@@ -50,10 +50,15 @@ class CreateRedirectNumberAnswer
 
                 $mappingKnownDigits = explode('*', $mapping['mapping']);
 
-                if ((stripos($phone, $mappingKnownDigits[0]) !== false) && $mappingLength == $phoneLength) {
-                    $phoneIsAllowed = true;
-                    break;
-                }
+		if(preg_match('/\d/', $mapping['mapping']) && (stripos($phone, $mappingKnownDigits[0]) !== false) && $mappingLength == $phoneLength){
+               		$phoneIsAllowed = true;
+                    	break;
+                	
+		}elseif(!preg_match('/\d/', $mapping['mapping']) && $mappingLength == $phoneLength){
+			$phoneIsAllowed = true;
+                    	break;
+
+		}
             }
 
             if ($phoneIsAllowed == true) {
@@ -73,7 +78,8 @@ class CreateRedirectNumberAnswer
                 return 'Номер для переадресации уже такой';
 
             } else {
-                return 'Данное направление запрещено для переадресации.';
+		
+                return ' Данное направление запрещено для переадресации.';
             }
         } else {
             return 'Направлений для переадресаций не найдено';

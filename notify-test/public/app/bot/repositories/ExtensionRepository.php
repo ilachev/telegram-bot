@@ -5,6 +5,7 @@ namespace Pcs\Bot\repositories;
 use Pcs\Bot\Logger;
 use Pcs\Bot\Models\Chat;
 use Pcs\Bot\Models\Extension;
+use Pcs\Bot\Models\Redirect;
 use Pcs\Bot\Models\User;
 
 class ExtensionRepository
@@ -18,20 +19,24 @@ class ExtensionRepository
     {
         $delExtension = Extension::where('extension', '=', $extension)->first();
 
+        Logger::log($delExtension->user_id);
         if ($delExtension) {
-
             $chat = Chat::where('user_id', '=', $delExtension->user_id)->first();
             $user = User::where('id', '=', $delExtension->user_id)->first();
+            $redirect = Redirect::where('id', '=', $delExtension->user_id)->first();
 
-            if ($delExtension->delete()) {
-                if ($chat->delete()) {
-                    $user->delete();
-                    return true;
-                }
-                return false;
-            } else {
-                return null;
+            $delExtension->delete();
+            if ($chat) {
+                $chat->delete();
             }
+            if ($redirect) {
+                $redirect->delete();
+            }
+
+            if ($user->delete()) {
+                return true;
+            }
+            return null;
         }
         return null;
     }

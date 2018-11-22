@@ -13,9 +13,11 @@ class AddingRedirectAnotherNumberAnswer
 
         $sessionRepository->setStatus($chatID, SessionStatusHelper::ADDING_REDIRECT_ANOTHER_NUMBER);
 
-        $answer = 'Введите номер для переадресации в международном формате' . PHP_EOL .
-            '(Пример 380501234567 или 79261234567 без +)';
+        $answer = 'Введите номер для переадресации в международном формате или добавочный сотрудника который вас заменяет' . PHP_EOL .
+            '(Пример 380501234567, 79261234567 (без +) или 123)';
 
         return $answer;
     }
 }
+
+
