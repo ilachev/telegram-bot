@@ -15,16 +15,10 @@ class RedirectRepository
 
     public function updateRedirect($userID, $newRedirect)
     {
-        $redirect = Redirect::all()->where('user_id', '=', $userID)->first();
+        Redirect::where('user_id', '=', $userID)->delete();
 
-        if (empty($redirect)) {
-            $redirect = new Redirect();
-            $redirect->user_id = $userID;
-        }
-
-        if ($redirect->redirect == $newRedirect) {
-            return false;
-        }
+        $redirect = new Redirect();
+        $redirect->user_id = $userID;
         $redirect->redirect = $newRedirect;
         $redirect->save();
         return true;
