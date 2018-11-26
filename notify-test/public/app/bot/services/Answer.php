@@ -29,6 +29,8 @@ use Pcs\Bot\services\answer\UnsubscribeAnswer;
 use Pcs\Bot\services\answer\user\AddingRedirectAnotherNumberAnswer;
 use Pcs\Bot\services\answer\user\AddingRedirectAnswer;
 use Pcs\Bot\services\answer\user\AutoResponderAnswer;
+use Pcs\Bot\services\answer\user\AutoResponderOffAnswer;
+use Pcs\Bot\services\answer\user\AutoResponderOnAnswer;
 use Pcs\Bot\services\answer\user\CreateRedirectNumberAnswer;
 use Pcs\Bot\services\answer\user\ManageRedirectsAnswer;
 use Pcs\Bot\services\answer\user\StartAnswer;
@@ -143,6 +145,12 @@ class Answer
 
             case CommandHelper::AUTO_RESPONDER;
                 return AutoResponderAnswer::get($chatID);
+
+            case CommandHelper::AUTO_RESPONDER_ON;
+                return AutoResponderOnAnswer::get($chatID);
+
+            case CommandHelper::AUTO_RESPONDER_OFF;
+                return AutoResponderOffAnswer::get($chatID);
 
             case CommandHelper::NO:
                 if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
@@ -269,6 +277,10 @@ class Answer
                 } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING) {
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER_ON) {
+                    $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER_OFF) {
                     $answer = 'Выберите пункт';
                 }
                 return $answer;

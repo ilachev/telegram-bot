@@ -35,4 +35,7 @@ class CommandHelper
     const AUTO_RESPONDER = 'Автоответчик';
     const AUTO_RESPONDER_ON = 'Включить автоответчик';
     const AUTO_RESPONDER_OFF = 'Выключить автоответчик';
+
+    const AUTO_RESPONDER_ON_NUMBER = 1;
+    const AUTO_RESPONDER_OFF_NUMBER = 0;
 }

@@ -129,6 +129,12 @@ class Keyboard
             case CommandHelper::AUTO_RESPONDER;
                 return AutoResponderKeyboard::get($chatID);
 
+            case CommandHelper::AUTO_RESPONDER_ON;
+                return BackKeyboard::get();
+
+            case CommandHelper::AUTO_RESPONDER_OFF;
+                return BackKeyboard::get();
+
             case CommandHelper::NO:
                 if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::DELETING_DIRECTIONS);
@@ -330,8 +336,33 @@ class Keyboard
 
                 } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER) {
 
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
-                    return AdminStartKeyboard::get($chatID);
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                        return AdminStartKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                        return StartKeyboard::get($chatID);
+                    }
+
+                } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER_ON) {
+
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                        return AdminStartKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                        return StartKeyboard::get($chatID);
+                    }
+
+                } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER_OFF) {
+
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                        return AdminStartKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                        return StartKeyboard::get($chatID);
+                    }
 
                 }
 

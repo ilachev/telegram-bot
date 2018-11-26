@@ -37,4 +37,9 @@ class User extends Model
     {
         return $this->hasOne(Extension::class);
     }
+
+    public function auto_responder_status()
+    {
+        return $this->hasOne(AutoResponderStatus::class);
+    }
 }
