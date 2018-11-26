@@ -19,6 +19,8 @@ defined('AMI_PORT') or define('AMI_PORT', '5038');
 defined('AMI_USER') or define('AMI_USER', 'tlgrbot_user');
 defined('AMI_PASS') or define('AMI_PASS', 'hJFkEEYY3Np');
 
+defined('AUTO_RESPONDER_FILES_DIRECTORY') or define('AUTO_RESPONDER_FILES_DIRECTORY', '/var/spool/asterisk/voicemail/default/1234/INBOX/');
+
 /**
  * настройка сокета в формате socks5://110:ef2tlgrproxy@5.189.129.242:31080
  */

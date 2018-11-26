@@ -56,4 +56,14 @@ class AutoResponderStatusRepository
         }
         return null;
     }
+
+    public function getStatusByUserId($userId)
+    {
+        $status = AutoResponderStatus::where('user_id', '=', $userId)->first();
+
+        if ($status) {
+            return $status->status;
+        }
+        return null;
+    }
 }

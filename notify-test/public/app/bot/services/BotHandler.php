@@ -21,7 +21,7 @@ class BotHandler
         $this->sessionRepository = new SessionRepository();
     }
 
-    public function on($notify = false, $chat = false, $answer = false)
+    public function on($notify = false, $chat = false, $answer = false, $voiceFilePath = false)
     {
         try {
             $bot = new Client(API_KEY);
@@ -45,6 +45,22 @@ class BotHandler
                     null,
                     false
                 );
+
+            } elseif ($voiceFilePath !== false) {
+
+                $bot->sendMessage(
+                    $chat,
+                    $answer,
+                    'html',
+                    false,
+                    null,
+                    null,
+                    false
+                );
+
+                $voiceFile = new \CURLFile('/tmp/tmp.bZVbL6br0H/stream.part3-opus.ogg');
+
+                $bot->sendVoice($chat, $voiceFile);
 
             } else {
                 $bot->command(CommandHelper::START, function ($message) use ($bot) {
