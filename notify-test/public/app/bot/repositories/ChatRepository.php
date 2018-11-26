@@ -40,7 +40,14 @@ class ChatRepository
     {
         $chat = Chat::all()->where('user_id', '=', $userID)->first();
 
-        return $chat->chat_id;
+	if(!$chat){
+	
+		return false;
+
+	}else{
+		return $chat->chat_id;	
+	}
+        
     }
 
     public function deleteChat($chatID)

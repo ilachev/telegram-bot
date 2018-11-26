@@ -14,6 +14,7 @@ use Pcs\Bot\services\keyboard\admin\AdminUserManagementKeyboard;
 use Pcs\Bot\services\keyboard\BackKeyboard;
 use Pcs\Bot\services\keyboard\NotAdminKeyboard;
 use Pcs\Bot\services\keyboard\user\AddingRedirectKeyboard;
+use Pcs\Bot\services\keyboard\user\AutoResponderKeyboard;
 use Pcs\Bot\services\keyboard\user\ManageRedirectsKeyboard;
 use Pcs\Bot\services\keyboard\user\StartKeyboard;
 use Pcs\Bot\services\keyboard\YesNoKeyboard;
@@ -124,6 +125,9 @@ class Keyboard
 
             case CommandHelper::ADDING_REDIRECT_ANOTHER_NUMBER:
                 return BackKeyboard::get();
+
+            case CommandHelper::AUTO_RESPONDER;
+                return AutoResponderKeyboard::get($chatID);
 
             case CommandHelper::NO:
                 if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
@@ -320,6 +324,11 @@ class Keyboard
                     return BackKeyboard::get();
 
                 } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FOURTH_STEP) {
+
+                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                    return AdminStartKeyboard::get($chatID);
+
+                } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER) {
 
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
                     return AdminStartKeyboard::get($chatID);

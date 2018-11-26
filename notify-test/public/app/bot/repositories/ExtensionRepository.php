@@ -19,18 +19,19 @@ class ExtensionRepository
     {
         $delExtension = Extension::where('extension', '=', $extension)->first();
 
-        Logger::log($delExtension->user_id);
         if ($delExtension) {
             $chat = Chat::where('user_id', '=', $delExtension->user_id)->first();
             $user = User::where('id', '=', $delExtension->user_id)->first();
-            $redirect = Redirect::where('id', '=', $delExtension->user_id)->first();
+            $redirects = Redirect::all()->where('user_id', '=', $delExtension->user_id)->all();
 
             $delExtension->delete();
             if ($chat) {
                 $chat->delete();
             }
-            if ($redirect) {
-                $redirect->delete();
+            if ($redirects) {
+                foreach ($redirects as $redirect) {
+                    $redirect->delete();
+                }
             }
 
             if ($user->delete()) {

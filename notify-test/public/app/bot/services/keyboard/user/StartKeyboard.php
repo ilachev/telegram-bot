@@ -17,7 +17,8 @@ class StartKeyboard
         if (!empty($chat->chat_id)) {
             $keyboard = [
                 [
-                    ["text" => CommandHelper::MANAGE_REDIRECTS]
+                    ["text" => CommandHelper::MANAGE_REDIRECTS],
+                    ["text" => CommandHelper::AUTO_RESPONDER],
                 ],
                 [
                     ["text" => CommandHelper::UNSUBSCRIBE]

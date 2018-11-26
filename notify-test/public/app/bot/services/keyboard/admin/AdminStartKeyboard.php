@@ -21,6 +21,9 @@ class AdminStartKeyboard
                     ["text" => CommandHelper::MANAGE_REDIRECTS],
                 ],
                 [
+                    ["text" => CommandHelper::AUTO_RESPONDER],
+                ],
+                [
                     ["text" => CommandHelper::UNSUBSCRIBE]
                 ]
             ];

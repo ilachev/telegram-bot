@@ -31,4 +31,8 @@ class CommandHelper
     const ADDING_REDIRECT = 'Установка номера для переадресации';
 
     const ADDING_REDIRECT_ANOTHER_NUMBER = 'Установить на другой номер';
+
+    const AUTO_RESPONDER = 'Автоответчик';
+    const AUTO_RESPONDER_ON = 'Включить автоответчик';
+    const AUTO_RESPONDER_OFF = 'Выключить автоответчик';
 }

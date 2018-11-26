@@ -52,4 +52,8 @@ class SessionStatusHelper
     const EDITING_MAPPING_THIRD_STEP = 31;
     const EDITING_MAPPING_FOURTH_STEP = 32;
     const EDITING_MAPPING_NOT_HAVE = 33;
+
+    const AUTO_RESPONDER = 34;
+    const AUTO_RESPONDER_ON = 35;
+    const AUTO_RESPONDER_OFF = 36;
 }

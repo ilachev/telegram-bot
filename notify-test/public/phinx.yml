@@ -1,16 +1,16 @@
 paths:
-    migrations: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/notify/public/db/migrations'
-    seeds: '/home/admin/web/efsol-telegram.igorvetrov.ru/public_html/notify/public/db/seeds'
+    migrations: '/var/www/voip.efsol.ru/asterisk/notify-test/public/db/migrations'
+    seeds: '/var/www/voip.efsol.ru/asterisk/notify-test/public/db/seeds'
 
 environments:
     default_migration_table: phinxlog
-    default_database: development
+    default_database: production
     production:
         adapter: mysql
         host: localhost
-        name: efsoltel_db
-        user: admin_efsoltel
-        pass: 'xJbTh0Sq0G'
+        name: telegrambot
+        user: telegrambot
+        pass: 'FhgkIyyTe50'
         port: 3306
         charset: utf8
 
