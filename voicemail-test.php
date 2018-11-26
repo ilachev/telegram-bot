@@ -61,11 +61,10 @@ if (count($argv) == 3) {
                 var_dump($autoResponderStatus);
 
                 $bot = new BotHandler();
-                $bot->on(false, $chatID, $answer, $voiceFile);
+                $bot->on(false, $chatID, $answer, $argv[1]);
             }
         }
     }
-
 
 } else {
     print "Please set all arguments...";

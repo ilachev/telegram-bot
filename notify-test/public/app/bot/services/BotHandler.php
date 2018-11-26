@@ -58,7 +58,7 @@ class BotHandler
                     false
                 );
 
-                $voiceFile = new \CURLFile('/tmp/tmp.bZVbL6br0H/stream.part3-opus.ogg');
+                $voiceFile = new \CURLFile($voiceFilePath);
 
                 $bot->sendVoice($chat, $voiceFile);
 
