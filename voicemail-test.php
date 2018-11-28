@@ -41,6 +41,8 @@ if (count($argv) == 3) {
             } elseif (pathinfo($file)['extension'] == 'wav') {
                 $voiceFile = AUTO_RESPONDER_FILES_DIRECTORY . $file;
             }
+
+            unlink(AUTO_RESPONDER_FILES_DIRECTORY . $file);
         }
     }
 
@@ -57,9 +59,6 @@ if (count($argv) == 3) {
             $autoResponderStatus = $statusRepository->getStatusByUserId($userId);
 
             if ($autoResponderStatus == CommandHelper::AUTO_RESPONDER_ON_NUMBER) {
-                var_dump($chatID);
-                var_dump($autoResponderStatus);
-
                 $bot = new BotHandler();
                 $bot->on(false, $chatID, $answer, $argv[1]);
             }

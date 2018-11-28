@@ -3,6 +3,7 @@
 namespace Pcs\Bot\repositories;
 
 use Pcs\Bot\Logger;
+use Pcs\Bot\Models\AutoResponderStatus;
 use Pcs\Bot\Models\Chat;
 use Pcs\Bot\Models\Extension;
 use Pcs\Bot\Models\Redirect;
@@ -22,11 +23,15 @@ class ExtensionRepository
         if ($delExtension) {
             $chat = Chat::where('user_id', '=', $delExtension->user_id)->first();
             $user = User::where('id', '=', $delExtension->user_id)->first();
+            $status = AutoResponderStatus::where('id', '=', $delExtension->user_id)->first();
             $redirects = Redirect::all()->where('user_id', '=', $delExtension->user_id)->all();
 
             $delExtension->delete();
             if ($chat) {
                 $chat->delete();
+            }
+            if ($status) {
+                $status->delete();
             }
             if ($redirects) {
                 foreach ($redirects as $redirect) {
