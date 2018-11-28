@@ -22,9 +22,10 @@ class ExtensionRepository
 
         if ($delExtension) {
             $chat = Chat::where('user_id', '=', $delExtension->user_id)->first();
-            $user = User::where('id', '=', $delExtension->user_id)->first();
-            $status = AutoResponderStatus::where('id', '=', $delExtension->user_id)->first();
+            $status = AutoResponderStatus::where('user_id', '=', $delExtension->user_id)->first();
             $redirects = Redirect::all()->where('user_id', '=', $delExtension->user_id)->all();
+
+            $user = User::where('id', '=', $delExtension->user_id)->first();
 
             $delExtension->delete();
             if ($chat) {
