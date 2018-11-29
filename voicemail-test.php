@@ -1,10 +1,12 @@
+#!/usr/bin/env php
 <?php
 
-require '/var/www/voip.efsol.ru/asterisk/notify-test/public/vendor/autoload.php';
-require '/var/www/voip.efsol.ru/asterisk/notify-test/public/config.php';
+require '/var/www/voip.efsol.ru/asterisk/notify/public/vendor/autoload.php';
+require '/var/www/voip.efsol.ru/asterisk/notify/public/config.php';
 
 
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\Models\CorpClient;
 use Pcs\Bot\repositories\AutoResponderStatusRepository;
 use Pcs\Bot\repositories\UserRepository;
 use Pcs\Bot\repositories\ChatRepository;
@@ -24,34 +26,74 @@ if (count($argv) == 3) {
         return pathinfo(AUTO_RESPONDER_FILES_DIRECTORY . $file)['filename'] == $filename;
     });
 
-    $extension = '';
+    $CalleeNumber = '';
+    $CallerNumber = '';
     $voiceFile = '';
     $answer = '';
+
+    $userRepository = new UserRepository();
+    $chatRepository = new ChatRepository();
+    $statusRepository = new AutoResponderStatusRepository();
+
     if (!empty($files)) {
         foreach ($files as $file) {
             if (pathinfo($file)['extension'] == 'txt') {
+
                 $fileContent = file(AUTO_RESPONDER_FILES_DIRECTORY . $file);
                 foreach ($fileContent as $content) {
+
                     if (strpos($content, 'exten') !== false) {
                         $arContent = explode('=', $content);
-                        $extension = trim($arContent[1]);
-                        $answer = 'Вам поступил звонок с добавочного ' . $extension . ' и было оставлено голосовое сообщение';
+                        $CalleeNumber = trim($arContent[1]);
+                    }
+
+                    if (strpos($content, 'callerid') !== false) {
+                        $arContent = explode('=', $content);
+                        preg_match('/<(\d+)>/i',$arContent[1],$CallerMatches);
+                        $CallerNumber = trim($CallerMatches[1]);
+
+                        if (strlen($CallerNumber) <= 4) {
+                            $mapping = $userRepository->getMappingByExtension($CallerNumber);
+                            $fio = $mapping->user->full_name;
+
+                            if ($fio) {
+                                $answer = 'Вам поступил звонок с номера ' . $CallerNumber . ' от ' . $fio . ' и было оставлено голосовое сообщение';
+                            } else {
+                                $answer = 'Вам поступил звонок с номера ' . $CallerNumber . ' и было оставлено голосовое сообщение';
+                            }
+                        } elseif (strlen($CallerNumber) > 4) {
+
+                            $client = false;
+
+                            if (strlen($argv[2]) >= 10) {
+                                $client = CorpClient::where('client_number', 'like', '%' . substr($CallerNumber, -10))->first();
+                            }
+
+                            if ($client) {
+                                $clientName = $client->client_name;
+
+                                if (strlen($clientName) > 0) {
+                                    $answer = 'Вам поступил звонок с номера ' . $CallerNumber . ' от контрагента ' . $clientName . ' и было оставлено голосовое сообщение';
+                                } else {
+                                    $answer = 'Вам поступил звонок с номера ' . $CallerNumber . ' и было оставлено голосовое сообщение. Контрагент не определён';
+                                }
+                            } else {
+                                $answer = 'Вам поступил звонок с номера ' . $CallerNumber . ' и было оставлено голосовое сообщение. Контрагент не определён';
+                            }
+                        }
                     }
                 }
+
             } elseif (pathinfo($file)['extension'] == 'wav') {
                 $voiceFile = AUTO_RESPONDER_FILES_DIRECTORY . $file;
             }
 
-            unlink(AUTO_RESPONDER_FILES_DIRECTORY . $file);
+            #unlink(AUTO_RESPONDER_FILES_DIRECTORY . $file);
         }
     }
 
-    if (!empty($extension)) {
-        $userRepository = new UserRepository();
-        $chatRepository = new ChatRepository();
-        $statusRepository = new AutoResponderStatusRepository();
-
-        $userExtension = $userRepository->getMappingByExtension($extension);
+    if (!empty($CalleeNumber)) {
+        $userExtension = $userRepository->getMappingByExtension($CalleeNumber);
         $userId = $userExtension->user->id;
 
         if (!empty($userExtension)) {

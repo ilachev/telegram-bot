@@ -185,16 +185,14 @@ class Keyboard
 
                 if ($currentStatus == SessionStatusHelper::MANAGE_REDIRECTS) {
 
-                    $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                        return AdminStartKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                        return StartKeyboard::get($chatID);
+                    }
 
-                    $keyboard = [
-                        [
-                            ["text" => CommandHelper::MANAGE_REDIRECTS]
-                        ],
-                        [
-                            ["text" => CommandHelper::UNSUBSCRIBE]
-                        ]
-                    ];
                 } elseif ($currentStatus == SessionStatusHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS) {
 
                     if (in_array($chatID, $this->adminList)) {
