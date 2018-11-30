@@ -56,4 +56,8 @@ class SessionStatusHelper
     const AUTO_RESPONDER = 34;
     const AUTO_RESPONDER_ON = 35;
     const AUTO_RESPONDER_OFF = 36;
+
+    const DELETE_REDIRECT = 37;
+    const DELETE_REDIRECT_YES = 38;
+    const DELETE_REDIRECT_NO = 39;
 }

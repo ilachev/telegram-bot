@@ -66,4 +66,9 @@ class AutoResponderStatusRepository
         }
         return null;
     }
+
+    public function deleteStatus($userId)
+    {
+        AutoResponderStatus::where('user_id', '=', $userId)->delete();
+    }
 }

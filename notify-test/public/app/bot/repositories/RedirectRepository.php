@@ -34,4 +34,9 @@ class RedirectRepository
         }
         return false;
     }
+
+    public function deleteRedirect($userId)
+    {
+        Redirect::where('user_id', '=', $userId)->delete();
+    }
 }

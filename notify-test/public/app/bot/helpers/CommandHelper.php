@@ -29,6 +29,7 @@ class CommandHelper
 
     const VIEW_ALLOWED_DIRECTIONS_REDIRECTS = 'Разрешенные направления для переадресации';
     const ADDING_REDIRECT = 'Установка номера для переадресации';
+    const DELETE_REDIRECT = 'Отменить переадресацию';
 
     const ADDING_REDIRECT_ANOTHER_NUMBER = 'Установить на другой номер';
 

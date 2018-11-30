@@ -135,6 +135,9 @@ class Keyboard
             case CommandHelper::AUTO_RESPONDER_OFF;
                 return BackKeyboard::get();
 
+            case CommandHelper::DELETE_REDIRECT;
+                return YesNoKeyboard::get();
+
             case CommandHelper::NO:
                 if ($currentStatus == SessionStatusHelper::DELETING_DIRECTIONS_FIRST_STEP) {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::DELETING_DIRECTIONS);
@@ -151,9 +154,17 @@ class Keyboard
                 } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
                     return AdminStartKeyboard::get($chatID);
-                } else {
+                } elseif ($currentStatus == SessionStatusHelper::DELETE_REDIRECT) {
                     $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
                     return ManageRedirectsKeyboard::get($chatID);
+                } else {
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_MANAGE_REDIRECTS);
+                        return AdminManageRedirectsKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::MANAGE_REDIRECTS);
+                        return ManageRedirectsKeyboard::get($chatID);
+                    }
                 }
 
             case CommandHelper::YES:
@@ -175,6 +186,8 @@ class Keyboard
                     } else {
                         return NotAdminKeyboard::get();
                     }
+                }  elseif ($currentStatus == SessionStatusHelper::DELETE_REDIRECT_YES) {
+                    return BackKeyboard::get();
                 } else {
                     return BackKeyboard::get();
                 }
@@ -353,6 +366,16 @@ class Keyboard
                     }
 
                 } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER_OFF) {
+
+                    if (in_array($chatID, $this->adminList)) {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);
+                        return AdminStartKeyboard::get($chatID);
+                    } else {
+                        $this->sessionRepository->setStatus($chatID, SessionStatusHelper::START);
+                        return StartKeyboard::get($chatID);
+                    }
+
+                } elseif ($currentStatus == SessionStatusHelper::DELETE_REDIRECT_YES) {
 
                     if (in_array($chatID, $this->adminList)) {
                         $this->sessionRepository->setStatus($chatID, SessionStatusHelper::ADMIN_START);

@@ -31,7 +31,9 @@ use Pcs\Bot\services\answer\user\AddingRedirectAnswer;
 use Pcs\Bot\services\answer\user\AutoResponderAnswer;
 use Pcs\Bot\services\answer\user\AutoResponderOffAnswer;
 use Pcs\Bot\services\answer\user\AutoResponderOnAnswer;
+use Pcs\Bot\services\answer\user\CreateDeleteRedirectAnswer;
 use Pcs\Bot\services\answer\user\CreateRedirectNumberAnswer;
+use Pcs\Bot\services\answer\user\DeleteRedirectAnswer;
 use Pcs\Bot\services\answer\user\ManageRedirectsAnswer;
 use Pcs\Bot\services\answer\user\StartAnswer;
 use Pcs\Bot\services\answer\user\SubscribeAnswer;
@@ -206,18 +208,20 @@ class Answer
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
-                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_NOT_HAVE) {
                     if (in_array($chatID, $this->adminList)) {
                         return AdminAddingMappingAnswer::get($chatID);
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
-                }  elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
+                } elseif ($currentStatus == SessionStatusHelper::EDITING_MAPPING_FIRST_STEP) {
                     if (in_array($chatID, $this->adminList)) {
                         return AdminCreateEditingMappingAnswer::get($chatID, null, 'second');
                     } else {
                         return NotAdminAnswer::get($chatID);
                     }
+                } elseif ($currentStatus == SessionStatusHelper::DELETE_REDIRECT) {
+                    return CreateDeleteRedirectAnswer::get($chatID);
                 } else {
                     return CreateRedirectNumberAnswer::get($chatID, null, $type = 'yes');
                 }
@@ -282,11 +286,16 @@ class Answer
                     $answer = 'Выберите пункт';
                 } elseif ($currentStatus == SessionStatusHelper::AUTO_RESPONDER_OFF) {
                     $answer = 'Выберите пункт';
+                } elseif ($currentStatus == SessionStatusHelper::DELETE_REDIRECT_YES) {
+                    $answer = 'Выберите пункт';
                 }
                 return $answer;
 
             case CommandHelper::UNSUBSCRIBE;
                 return UnsubscribeAnswer::get($chatID);
+
+            case CommandHelper::DELETE_REDIRECT;
+                return DeleteRedirectAnswer::get($chatID);
 
             default:
 
