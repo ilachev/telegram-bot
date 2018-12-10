@@ -3,6 +3,7 @@
 namespace Pcs\Asterisk;
 
 use PAMI\Client\Impl\ClientImpl;
+use PAMI\Message\Action\DBDelAction;
 use PAMI\Message\Action\DBPutAction;
 
 class AsteriskService
@@ -27,6 +28,17 @@ class AsteriskService
     public function updateRedirect($extension, $redirect)
     {
         $message = new DBPutAction('mobiles', $extension, $redirect);
+        $response = $this->client->send($message);
+
+        if ($response->getKey('response') == 'Success') {
+            return true;
+        }
+        return null;
+    }
+
+    public function deleteRedirect($extension)
+    {
+        $message = new DBDelAction('mobiles', $extension);
         $response = $this->client->send($message);
 
         if ($response->getKey('response') == 'Success') {

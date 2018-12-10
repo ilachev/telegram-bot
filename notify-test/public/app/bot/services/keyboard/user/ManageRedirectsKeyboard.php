@@ -3,6 +3,7 @@
 namespace Pcs\Bot\services\keyboard\user;
 
 use Pcs\Bot\helpers\CommandHelper;
+use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\RedirectRepository;
 use Pcs\Bot\repositories\UserRepository;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
@@ -24,6 +25,9 @@ class ManageRedirectsKeyboard
                     ['text' => CommandHelper::ADDING_REDIRECT],
                 ],
                 [
+                    ['text' => CommandHelper::DELETE_REDIRECT]
+                ],
+                [
                     ['text' => CommandHelper::BACK]
                 ]
             ];
@@ -32,9 +36,6 @@ class ManageRedirectsKeyboard
                 [
                     ['text' => CommandHelper::VIEW_ALLOWED_DIRECTIONS_REDIRECTS],
                     ['text' => CommandHelper::ADDING_REDIRECT],
-                ],
-                [
-                    ['text' => CommandHelper::DELETE_REDIRECT]
                 ],
                 [
                     ['text' => CommandHelper::BACK]

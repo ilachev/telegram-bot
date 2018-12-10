@@ -18,6 +18,6 @@ class AutoResponderOnAnswer
         $sessionRepository->setStatus($chatId, SessionStatusHelper::AUTO_RESPONDER_ON);
 
         return 'Автоответчик включён.' . PHP_EOL .
-            'Если вы в течении ХХ секунд не ответили на входящий вызов, то вызов будет отправлен на автоответчик';
+            'Если вы в течении 30 секунд не ответили на входящий вызов, то вызов будет отправлен на автоответчик';
     }
 }

@@ -4,6 +4,7 @@ namespace Pcs\Bot\services\answer\user;
 
 use Pcs\Asterisk\AsteriskService;
 use Pcs\Bot\helpers\SessionStatusHelper;
+use Pcs\Bot\Logger;
 use Pcs\Bot\repositories\ChatRepository;
 use Pcs\Bot\repositories\MappingRepository;
 use Pcs\Bot\repositories\RedirectRepository;
@@ -39,6 +40,7 @@ class CreateRedirectNumberAnswer
                     return 'Не удалось установить номер для переадресации';
                 }
             }
+            return 'Не удалось установить номер для переадресации';
         }
 
         $mappings = $mappingRepository->getMappings();
@@ -50,15 +52,15 @@ class CreateRedirectNumberAnswer
 
                 $mappingKnownDigits = explode('*', $mapping['mapping']);
 
-		if(preg_match('/\d/', $mapping['mapping']) && (stripos($phone, $mappingKnownDigits[0]) !== false) && $mappingLength == $phoneLength){
-               		$phoneIsAllowed = true;
-                    	break;
-                	
-		}elseif(!preg_match('/\d/', $mapping['mapping']) && $mappingLength == $phoneLength){
-			$phoneIsAllowed = true;
-                    	break;
+                if(preg_match('/\d/', $mapping['mapping']) && (stripos($phone, $mappingKnownDigits[0]) !== false) && $mappingLength == $phoneLength){
+                    $phoneIsAllowed = true;
+                    break;
 
-		}
+                }elseif(!preg_match('/\d/', $mapping['mapping']) && $mappingLength == $phoneLength){
+                    $phoneIsAllowed = true;
+                    break;
+
+                }
             }
 
             if ($phoneIsAllowed == true) {
